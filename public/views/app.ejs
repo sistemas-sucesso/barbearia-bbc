@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Salão</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+        }
+        .show-hide-btn, button {
+            padding: 10px 15px;
+            margin: 10px 0;
+            border: none;
+            cursor: pointer;
+        }
+        .show-hide-btn {
+            background-color: #007bff;
+            color: #fff;
+        }
+        button.edit {
+            background-color: #ffc107;
+            color: #fff;
+        }
+        button.delete {
+            background-color: #dc3545;
+            color: #fff;
+        }
+        button.cancel {
+            background-color: #6c757d;
+            color: #fff;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sistema de Salão</h1>
+        <button class="show-hide-btn" onclick="toggleForm()">Adicionar Transação</button>
+        <form id="transaction-form" action="/transacao" method="post" style="display:none;">
+            <h2>Adicionar Nova Transação</h2>
+            <label for="nome_do_item">Nome do Item:</label>
+            <input type="text" id="nome_do_item" name="nome_do_item" required>
+
+            <label for="tipo">Tipo:</label>
+            <select id="tipo" name="tipo" required>
+                <option value="entrada">Entrada</option>
+                <option value="saida">Saída</option>
+            </select>
+
+            <label for="valor">Valor:</label>
+            <input type="number" id="valor" name="valor" step="0.01" required>
+
+            <label for="data">Data:</label>
+            <input type="date" id="data" name="data" required>
+
+            <label for="forma_pagamento">Forma de Pagamento:</label>
+            <select id="forma_pagamento" name="forma_pagamento" required>
+                <option value="pix">Pix</option>
+                <option value="cartao">Cartão</option>
+                <option value="dinheiro">Dinheiro</option>
+            </select>
+
+            <label for="barbeiro_id">Barbeiro:</label>
+            <select id="barbeiro_id" name="barbeiro_id" required>
+                <% barbeiros.forEach(barbeiro => { %>
+                    <option value="<%= barbeiro.id %>"><%= barbeiro.nome %></option>
+                <% }) %>
+            </select>
+
+            <button type="submit">Adicionar</button>
+        </form>
+
+        <h2>Barbeiros</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Total de Entrada</th>
+                    <th>Total de Saída</th>
+                    <th>Saldo</th>
+                    <th>Total Entrada do Dia</th>
+                    <th>Total Saída do Dia</th>
+                    <th>Total Entrada da Semana</th>
+                    <th>Total Saída da Semana</th>
+                    <th>Total Entrada do Mês</th>
+                    <th>Total Saída do Mês</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% barbeiros.forEach(barbeiro => { %>
+                    <tr>
+                        <td><%= barbeiro.nome %></td>
+                        <td>R$ <%= barbeiro.total_entrada %></td>
+                        <td>R$ <%= barbeiro.total_saida %></td>
+                        <td>R$ <%= barbeiro.saldo %></td>
+                        <td>R$ <%= barbeiro.total_entrada_dia %></td>
+                        <td>R$ <%= barbeiro.total_saida_dia %></td>
+                        <td>R$ <%= barbeiro.total_entrada_semana %></td>
+                        <td>R$ <%= barbeiro.total_saida_semana %></td>
+                        <td>R$ <%= barbeiro.total_entrada_mes %></td>
+                        <td>R$ <%= barbeiro.total_saida_mes %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+
+        <h2>Transações</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome do Item</th>
+                    <th>Tipo</th>
+                    <th>Valor</th>
+                    <th>Data</th>
+                    <th>Forma de Pagamento</th>
+                    <th>Barbeiro</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% transacoes.forEach(transacao => { %>
+                    <tr>
+                        <td><%= transacao.id %></td>
+                        <td><%= transacao.nome_do_item %></td>
+                        <td><%= transacao.tipo %></td>
+                        <td>R$ <%= transacao.valor %></td>
+                        <td><%= transacao.data %></td>
+                        <td><%= transacao.forma_pagamento %></td>
+                        <td><%= transacao.barbeiro %></td>
+                        <td>
+                            <button class="edit" onclick="editTransaction('<%= transacao.id %>', '<%= escape(transacao.nome_do_item) %>', '<%= transacao.tipo %>', '<%= transacao.valor %>', '<%= transacao.data %>', '<%= transacao.forma_pagamento %>', '<%= transacao.barbeiro_id %>')">Editar</button>
+
+
+                            <form action="/delete-transacao" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="<%= transacao.id %>">
+                                <button class="delete" type="submit">Deletar</button>
+                            </form>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+
+        <form id="edit-transaction-form" action="/update-transacao" method="post" style="display:none;">
+            <h2>Editar Transação</h2>
+            <input type="hidden" id="edit-id" name="id">
+            
+            <label for="edit-nome_do_item">Nome do Item:</label>
+            <input type="text" id="edit-nome_do_item" name="nome_do_item" required>
+
+            <label for="edit-tipo">Tipo:</label>
+            <select id="edit-tipo" name="tipo" required>
+                <option value="entrada">Entrada</option>
+                <option value="saida">Saída</option>
+            </select>
+
+            <label for="edit-valor">Valor:</label>
+            <input type="number" id="edit-valor" name="valor" step="0.01" required>
+
+            <label for="edit-data">Data:</label>
+            <input type="date" id="edit-data" name="data" required>
+
+            <label for="edit-forma_pagamento">Forma de Pagamento:</label>
+            <select id="edit-forma_pagamento" name="forma_pagamento" required>
+                <option value="pix">Pix</option>
+                <option value="cartao">Cartão</option>
+                <option value="dinheiro">Dinheiro</option>
+            </select>
+
+            <label for="edit-barbeiro_id">Barbeiro:</label>
+            <select id="edit-barbeiro_id" name="barbeiro_id" required>
+                <% barbeiros.forEach(barbeiro => { %>
+                    <option value="<%= barbeiro.id %>"><%= barbeiro.nome %></option>
+                <% }) %>
+            </select>
+
+            <button type="submit">Salvar Alterações</button>
+            <button type="button" class="cancel" onclick="cancelEdit()">Cancelar</button>
+        </form>
+
+        <h2>Relatório Geral</h2>
+        <p>Total de Entrada: R$ <%= relatorio.total_entrada %></p>
+        <p>Total de Saída: R$ <%= relatorio.total_saida %></p>
+        <p>Total Entrada do Dia: R$ <%= relatorio.total_entrada_dia %></p>
+        <p>Total Saída do Dia: R$ <%= relatorio.total_saida_dia %></p>
+        <p>Total Entrada da Semana: R$ <%= relatorio.total_entrada_semana %></p>
+        <p>Total Saída da Semana: R$ <%= relatorio.total_saida_semana %></p>
+        <p>Total Entrada do Mês: R$ <%= relatorio.total_entrada_mes %></p>
+        <p>Total Saída do Mês: R$ <%= relatorio.total_saida_mes %></p>
+    </div>
+    <script src="/app.js">
+        function toggleForm() {
+            const form = document.getElementById('transaction-form');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function editTransaction(id, nome_do_item, tipo, valor, data, forma_pagamento, barbeiro_id) {
+            alert("barbeiro_id:", barbeiro_id);
+            console.log("barbeiro_id:", barbeiro_id);
+            const form = document.getElementById('edit-transaction-form');
+            form.style.display = 'block';
+
+            document.getElementById('edit-id').value = id;
+            document.getElementById('edit-nome_do_item').value = nome_do_item;
+            document.getElementById('edit-tipo').value = tipo;
+            document.getElementById('edit-valor').value = valor;
+            document.getElementById('edit-data').value = data;
+            document.getElementById('edit-forma_pagamento').value = forma_pagamento;
+            const selectBarbeiro = document.getElementById('edit-barbeiro_id');
+            if (selectBarbeiro) {
+                selectBarbeiro.value = barbeiro_id;
+                console.log("Valor do selectBarbeiro:", selectBarbeiro.value); // Verifique se o valor é correto
+            }
+        }
+
+        function cancelEdit() {
+            const form = document.getElementById('edit-transaction-form');
+            form.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
