@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Transação</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: auto;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input[type="text"], input[type="number"], input[type="date"], select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button[type="submit"] {
+            background-color: #28a745;
+            color: #fff;
+        }
+        .cancel {
+            background-color: #dc3545;
+            color: #fff;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Editar Transação</h1>
+        <form action="/update-transacao" method="POST">
+            <input type="hidden" name="id" value="<%= transacao.id %>">
+            <label for="tipo">Tipo:</label>
+            <select name="tipo" id="tipo" required>
+                <option value="entrada" <%= transacao.tipo === 'entrada' ? 'selected' : '' %>>Entrada</option>
+                <option value="saida" <%= transacao.tipo === 'saida' ? 'selected' : '' %>>Saída</option>
+            </select>
+            <label for="valor">Valor:</label>
+            <input type="number" name="valor" id="valor" step="0.01" value="<%= transacao.valor %>" required>
+            <label for="data">Data:</label>
+            <input type="date" name="data" id="data" value="<%= transacao.data %>" required>
+            <label for="forma_pagamento">Forma de Pagamento:</label>
+            <select name="forma_pagamento" id="forma_pagamento" required>
+                <option value="dinheiro" <%= transacao.forma_pagamento === 'dinheiro' ? 'selected' : '' %>>Dinheiro</option>
+                <option value="cartao" <%= transacao.forma_pagamento === 'cartao' ? 'selected' : '' %>>Cartão</option>
+                <option value="pix" <%= transacao.forma_pagamento === 'pix' ? 'selected' : '' %>>Pix</option>
+            </select>
+            <label for="nome_do_item">Nome do Item:</label>
+            <input type="text" name="nome_do_item" id="nome_do_item" value="<%= transacao.nome_do_item %>" required>
+            <label for="barbeiro_id">Barbeiro:</label>
+            <select name="barbeiro_id" id="barbeiro_id" required>
+                <% barbeiros.forEach(barbeiro => { %>
+                    <option value="<%= barbeiro.id %>" <%= transacao.barbeiro_id === barbeiro.id ? 'selected' : '' %>><%= barbeiro.nome %></option>
+                <% }); %>
+            </select>
+            <button type="submit">Atualizar</button>
+            <a href="/" class="cancel">Cancelar</a>
+        </form>
+    </div>
+</body>
+</html>
