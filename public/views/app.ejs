@@ -151,8 +151,10 @@
             </tbody>
         </table>
 
-        <h2>Transações</h2>
-        <table>
+       <button id="toggleTableBtn">Mostrar Transações</button>
+
+<h2>Transações</h2>
+<table id="transacoesTable" style="display:none;">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -265,6 +267,19 @@
             const form = document.getElementById('edit-transaction-form');
             form.style.display = 'none';
         }
+
+
+    document.getElementById('toggleTableBtn').addEventListener('click', function() {
+        var table = document.getElementById('transacoesTable');
+        if (table.style.display === 'none') {
+            table.style.display = 'table'; // Ou 'block', se você preferir
+            this.textContent = 'Esconder Transações';
+        } else {
+            table.style.display = 'none';
+            this.textContent = 'Mostrar Transações';
+        }
+    });
+
     </script>
 </body>
 </html>
