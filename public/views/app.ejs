@@ -75,6 +75,162 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
+        /**/
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .containers {
+            width: 90%;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .tabs ul {
+            display: flex;
+            justify-content: space-around;
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+            background-color: #333;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .tabs ul li {
+            flex: 1;
+        }
+        
+        .tabs ul li a {
+            display: block;
+            text-decoration: none;
+            color: #fff;
+            text-align: center;
+            padding: 15px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .tabs ul li a:hover,
+        .tabs ul li a.active {
+            background-color: #555;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        h2 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #555;
+        }
+        
+        #servicos-joao,
+        #servicos-marcos,
+        #servicos-henrique,
+        #relatorio-joao,
+        #relatorio-marcos,
+        #relatorio-henrique {
+            padding: 10px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        
+        
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+        
+        form input, form select {
+            padding: 10px;
+            margin: 10px 0;
+            width: 50%;
+        }
+        
+        form button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        form button:hover {
+            background-color: #555;
+        }
+        
+        .radio-group {
+            display: flex;
+            align-items: center; /* Alinha verticalmente os itens ao centro */
+            gap: 10px;
+            width: 20%; /* Espaçamento horizontal entre os itens */
+            margin-bottom: 30px;
+        }
+        
+        .radio-group label {
+            display: flex;
+            align-items: center; /* Alinha o texto do label com o input */
+            font-size: 1rem;
+            gap: 5px; /* Espaçamento entre o input e o texto */
+        }
+        
+        .radio-group input[type="radio"] {
+            margin: 0; /* Remove qualquer margem padrão que possa causar desalinhamento */
+        }
+        .radio-group input[type="radio"] {
+            transform: scale(1.5); /* Aumenta o tamanho do input radio */
+            margin-right: 5px; /* Ajusta o espaço entre o input e o label */
+        }
+        .relatorio11{                       
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .relatorio{
+            background: rgb(231, 233, 232);
+            width: 120px; margin-right: 2px;
+            border-radius: 10px;
+            height: 60px;
+            font-size: 15px;
+            padding: 5px;
+        }
     </style>
 </head>
 <body>
@@ -85,43 +241,66 @@
         <button class="show-hide-btn" onclick="toggleForm()">Adicionar Transação</button>
         <form id="transaction-form" action="/transacao" method="post" style="display:none;">
             <h2>Adicionar Nova Transação</h2>
-            <label for="nome_do_item">Nome do Item:</label>
+            
+             <label for="nome_do_item">Nome do Item:</label>
             <input type="text" id="nome_do_item" name="nome_do_item" required>
-
+        
             <label for="tipo">Tipo:</label>
-            <select id="tipo" name="tipo" required>
-                <option value="entrada">Entrada</option>
-                <option value="saida">Saída</option>
-            </select>
-
+            <div class="radio-group">
+                <input type="radio" id="entrada" name="tipo" value="entrada" required>
+                <label for="entrada">Entrada</label>
+                <input type="radio" id="saida" name="tipo" value="saida" required>
+                <label for="saida">Saída</label>
+            </div>
+        
+            <label for="servico">Serviço:</label>
+            <div class="radio-group">
+                <input type="radio" id="corte" name="servico" value="corte" required>
+                <label for="corte">Corte</label>
+                <input type="radio" id="barba" name="servico" value="barba" required>
+                <label for="barba">Barba</label>
+                <input type="radio" id="progressiva" name="servico" value="progressiva" required>
+                <label for="progressiva">Progressiva</label>
+                <input type="radio" id="alinhamento" name="servico" value="alinhamento" required>
+                <label for="alinhamento">Alizamento</label>
+                <input type="radio" id="produto" name="servico" value="produto" required>
+                <label for="produto">Produto</label>
+            </div>
+        
             <label for="valor">Valor:</label>
-            <input type="number" id="valor" name="valor" step="0.01" required>
-
-            <label for="data">Data:</label>
-            <input type="date" id="data" name="data" required>
-
+            <input style="width: 120px;" type="number" id="valor" name="valor" step="0.01" required>      
+            
+        
             <label for="forma_pagamento">Forma de Pagamento:</label>
-            <select id="forma_pagamento" name="forma_pagamento" required>
-                <option value="pix">Pix</option>
-                <option value="cartao">Cartão</option>
-                <option value="dinheiro">Dinheiro</option>
-            </select>
-
+            <div class="radio-group">
+                <input type="radio" id="pix" name="forma_pagamento" value="pix" required>
+                <label for="pix">Pix</label>
+                <input type="radio" id="cartao" name="forma_pagamento" value="cartao" required>
+                <label for="cartao">Cartão</label>
+                <input type="radio" id="dinheiro" name="forma_pagamento" value="dinheiro" required>
+                <label for="dinheiro">Dinheiro</label>
+            </div>
+        
             <label for="barbeiro_id">Barbeiro:</label>
-            <select id="barbeiro_id" name="barbeiro_id" required>
+            <div class="radio-group">
                 <% barbeiros.forEach(barbeiro => { %>
-                    <option value="<%= barbeiro.id %>"><%= barbeiro.nome %></option>
+                    <input type="radio" id="barbeiro_<%= barbeiro.id %>" name="barbeiro_id" value="<%= barbeiro.id %>" required>
+                    <label for="barbeiro_<%= barbeiro.id %>"><%= barbeiro.nome %></label>
                 <% }) %>
-            </select>
-
+            </div>        
             <button type="submit">Adicionar</button>
         </form>
+        <button id="toggleTableBtn1">Ver relatório</button>   
+        
 
         <h2>Barbeiros</h2>
-        <table>
+        <table id="transacoesTable1" style="display:none;">
             <thead>
                 <tr>
                     <th>Nome</th>
+                    <th>Total de servicos</th>
+                    <th>Total de produtos</th>
+                    <th>Total de rendimento</th>
                     <th>Total de Entrada</th>
                     <th>Total de Saída</th>
                     <th>Saldo</th>
@@ -137,6 +316,9 @@
                 <% barbeiros.forEach(barbeiro => { %>
                     <tr>
                         <td><%= barbeiro.nome %></td>
+                        <td>R$ <%= barbeiro.total_entrada_servicos %></td>
+                        <td>R$ <%= barbeiro.comissao_produtos %></td>
+                        <td>R$ <%= barbeiro.total_rendimento %></td>
                         <td>R$ <%= barbeiro.total_entrada %></td>
                         <td>R$ <%= barbeiro.total_saida %></td>
                         <td>R$ <%= barbeiro.saldo %></td>
@@ -158,7 +340,7 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Nome do Item</th>
+                    <th>Serviços</th>
                     <th>Tipo</th>
                     <th>Valor</th>
                     <th>Data</th>
@@ -171,7 +353,7 @@
                 <% transacoes.forEach(transacao => { %>
                     <tr>
                         <td><%= transacao.id %></td>
-                        <td><%= transacao.nome_do_item %></td>
+                        <td><%= transacao.servico %></td>
                         <td><%= transacao.tipo %></td>
                         <td>R$ <%= transacao.valor %></td>
                         <td><%= transacao.data %></td>
@@ -229,14 +411,73 @@
         </form>
 
         <h2>Relatório Geral</h2>
-        <p>Total de Entrada: R$ <%= relatorio.total_entrada %></p>
-        <p>Total de Saída: R$ <%= relatorio.total_saida %></p>
-        <p>Total Entrada do Dia: R$ <%= relatorio.total_entrada_dia %></p>
-        <p>Total Saída do Dia: R$ <%= relatorio.total_saida_dia %></p>
-        <p>Total Entrada da Semana: R$ <%= relatorio.total_entrada_semana %></p>
-        <p>Total Saída da Semana: R$ <%= relatorio.total_saida_semana %></p>
-        <p>Total Entrada do Mês: R$ <%= relatorio.total_entrada_mes %></p>
-        <p>Total Saída do Mês: R$ <%= relatorio.total_saida_mes %></p>
+        <div class="relatorio11">
+        <p class="relatorio">Saldo Total: R$ <%= relatorio.saldo_total %></p>
+        <p class="relatorio">Total de Entrada: R$ <%= relatorio.total_entrada %></p>
+        <p class="relatorio">Total de Saida: R$ <%= relatorio.total_saida %></p>
+        <p class="relatorio">Total Entrada do Dia: R$ <%= relatorio.total_entrada_dia %></p>
+        <p class="relatorio">Total Saida do Dia: R$ <%= relatorio.total_saida_dia %></p>
+        <p class="relatorio">Total Entrada da Semana: R$ <%= relatorio.total_entrada_semana %></p>
+        <p class="relatorio">Total Saida da Semana: R$ <%= relatorio.total_saida_semana %></p>
+        <p class="relatorio">Total Entrada do Mês: R$ <%= relatorio.total_entrada_mes %></p>
+        <p class="relatorio">Total Saida do Mês: R$ <%= relatorio.total_saida_mes %></p>
+    </div>
+    <div class="containers">
+        <h1>Relatório de Barbeiros</h1>
+
+        <div class="tabs">
+            <ul>
+                <li><a href="#tab-joao">João</a></li>
+                <li><a href="#tab-marcos">Marcos</a></li>
+                <li><a href="#tab-henrique">Henrique</a></li>
+            </ul>
+
+            <div id="tab-joao" class="tab-content">
+                <h2>Serviços Realizados por João</h2>
+                <div id="servicos-joao"></div>
+
+                <h2>Relatório de Rendimentos</h2>
+                <div id="relatorio-joao"></div>
+            </div>
+
+            <div id="tab-marcos" class="tab-content">
+                <h2>Serviços Realizados por Marcos</h2>
+                <div id="servicos-marcos"></div>
+
+                <h2>Relatório de Rendimentos</h2>
+                <div id="relatorio-marcos"></div>
+            </div>
+
+            <div id="tab-henrique" class="tab-content">
+                <h2>Serviços Realizados por Henrique</h2>
+                <div id="servicos-henrique"></div>
+
+                <h2>Relatório de Rendimentos</h2>
+                <div id="relatorio-henrique"></div>
+            </div>
+        </div>
+
+        <h2>Fechamento de Caixa</h2>
+        <form action="/fechar-caixa" method="post">
+            <input type="date" name="data_fechamento" required>
+            <input type="number" name="valor_entradas" step="0.01" placeholder="Valor das Entradas" required>
+            <input type="number" name="valor_saidas" step="0.01" placeholder="Valor das Saídas" required>
+            <input type="number" name="saldo" step="0.01" placeholder="Saldo" required>
+            <button type="submit">Fechar Caixa</button>
+        </form>
+
+        <h2>Relatório Mensal</h2>
+        <form id="relatorio-mensal-form">
+            <select name="mes" id="mes">
+                <option value="1">Janeiro</option>
+                <option value="2">Fevereiro</option>
+                <option value="3">Março</option>
+                <!-- Continue para todos os meses -->
+            </select>
+            <input type="number" name="ano" id="ano" placeholder="Ano" required>
+            <button type="submit">Gerar Relatório</button>
+        </form>
+        <div id="relatorio-mensal"></div>
     </div>
     <script>
         function toggleForm() {
@@ -279,7 +520,126 @@
             this.textContent = 'Mostrar Transações';
         }
     });
-
+    document.getElementById('toggleTableBtn1').addEventListener('click', function() {
+        var table = document.getElementById('transacoesTable1');
+        if (table.style.display === 'none') {
+            table.style.display = 'table'; // Ou 'block', se você preferir
+            this.textContent = 'Esconder Relatório';
+        } else {
+            table.style.display = 'none';
+            this.textContent = 'Mostrar Relatório';
+        }
+    });
+   
+    ///////////
+    document.addEventListener('DOMContentLoaded', function() {
+        const servicosJoao = document.getElementById('servicos-joao');
+        const servicosMarcos = document.getElementById('servicos-marcos');
+        const servicosHenrique = document.getElementById('servicos-henrique');
+    
+        const relatorioJoao = document.getElementById('relatorio-joao');
+        const relatorioMarcos = document.getElementById('relatorio-marcos');
+        const relatorioHenrique = document.getElementById('relatorio-henrique');
+    
+        // Função para carregar os serviços de cada barbeiro
+        function carregarServicos(barbeiroId, element) {
+            fetch(`/barbeiro-servicos/${barbeiroId}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Resultado", data);                    
+                    element.innerHTML = `
+                        <p>Total de Serviços: ${data.total_servicos}</p>
+                        <p>Cortes: ${data.cortes}</p>
+                        <p>Barbas: ${data.barbas}</p>
+                        <p>Produto: ${data.produto}</p>
+                        <p>Queratina: ${data.queratina}</p>
+                        <p>Alisamentos: ${data.alisamentos}</p>
+                    `;
+                });
+        }
+    
+        // Função para carregar o relatório de cada barbeiro
+        function carregarRelatorio(barbeiroId, element) {
+            fetch(`/barbeiro-relatorio/${barbeiroId}`)
+                .then(response => response.json())
+                .then(data => {
+                    let rendimentoServicos = parseFloat(data.rendimento_servicos) || 0;
+                    let comissaoProdutos = parseFloat(data.comissao_produtos) || 0;
+                    let totalRendimento = parseFloat(data.total_rendimento) || 0;
+        
+                    // Limpa o conteúdo anterior
+                    element.innerHTML = '';
+        
+                    // Cria elementos para cada dado
+                    const rendimentoServicosP = document.createElement('p');
+                    rendimentoServicosP.textContent = `Rendimento em Serviços: R$${rendimentoServicos.toFixed(2)}`;
+        
+                    const comissaoProdutosP = document.createElement('p');
+                    comissaoProdutosP.textContent = `Comissão em Produtos: R$${comissaoProdutos.toFixed(2)}`;
+        
+                    const totalRendimentoP = document.createElement('p');
+                    totalRendimentoP.textContent = `Total de Rendimento: R$${totalRendimento.toFixed(2)}`;
+        
+                    // Adiciona os elementos ao DOM
+                    element.appendChild(rendimentoServicosP);
+                    element.appendChild(comissaoProdutosP);
+                    element.appendChild(totalRendimentoP);
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar o relatório:', error);
+                });
+        }
+        
+    
+        carregarServicos(1, servicosJoao);
+        carregarServicos(2, servicosMarcos);
+        carregarServicos(3, servicosHenrique);
+    
+        carregarRelatorio(1, relatorioJoao);
+        carregarRelatorio(2, relatorioMarcos);
+        carregarRelatorio(3, relatorioHenrique);
+    
+        const formRelatorioMensal = document.getElementById('relatorio-mensal-form');
+        const relatorioMensal = document.getElementById('relatorio-mensal');
+    
+        formRelatorioMensal.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const mes = document.getElementById('mes').value;
+            const ano = document.getElementById('ano').value;
+    
+            fetch(`/relatorio-mensal/${mes}/${ano}`)
+                .then(response => response.json())
+                .then(data => {
+                    relatorioMensal.innerHTML = `
+                        <p>Receita Total: R$${data.receita_total.toFixed(2)}</p>
+                        <p>Rendimentos Totais: R$${data.rendimentos_totais.toFixed(2)}</p>
+                        <p>Despesas Totais: R$${data.despesas_totais.toFixed(2)}</p>
+                    `;
+                });
+        });
+    });
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        const tabs = document.querySelectorAll('.tabs ul li a');
+        const tabContents = document.querySelectorAll('.tab-content');
+    
+        tabs.forEach(tab => {
+            tab.addEventListener('click', (event) => {
+                event.preventDefault(); // Impede o comportamento padrão do link
+    
+                // Remove a classe 'active' de todas as abas e conteúdos
+                tabs.forEach(tab => tab.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+    
+                // Adiciona a classe 'active' ao conteúdo da aba clicada
+                document.querySelector(tab.getAttribute('href')).classList.add('active');
+            });
+        });
+    });
+    function esconder() {
+        const form = document.getElementById('transaction-form');
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
     </script>
 </body>
 </html>
