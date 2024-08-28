@@ -27,20 +27,25 @@ db.connect(err => {
 app.get('/', (req, res) => {
     const queryBarbeiros = `
         SELECT
-            b.id AS id, 
-            b.nome AS nome,
-            SUM(CASE WHEN t.tipo = 'entrada' THEN t.valor ELSE 0 END) * 0.3 AS total_entrada,
-            SUM(CASE WHEN t.tipo = 'saida' THEN t.valor ELSE 0 END) AS total_saida,
-            (SUM(CASE WHEN t.tipo = 'entrada' THEN t.valor ELSE 0 END) * 0.3) - SUM(CASE WHEN t.tipo = 'saida' THEN t.valor ELSE 0 END) AS saldo,
-            SUM(CASE WHEN t.tipo = 'entrada' AND DATE(t.data) = CURDATE() THEN t.valor ELSE 0 END) * 0.3 AS total_entrada_dia,
-            SUM(CASE WHEN t.tipo = 'saida' AND DATE(t.data) = CURDATE() THEN t.valor ELSE 0 END) AS total_saida_dia,
-            SUM(CASE WHEN t.tipo = 'entrada' AND WEEK(t.data) = WEEK(CURDATE()) THEN t.valor ELSE 0 END) * 0.3 AS total_entrada_semana,
-            SUM(CASE WHEN t.tipo = 'saida' AND WEEK(t.data) = WEEK(CURDATE()) THEN t.valor ELSE 0 END) AS total_saida_semana,
-            SUM(CASE WHEN t.tipo = 'entrada' AND MONTH(t.data) = MONTH(CURDATE()) THEN t.valor ELSE 0 END) * 0.3 AS total_entrada_mes,
-            SUM(CASE WHEN t.tipo = 'saida' AND MONTH(t.data) = MONTH(CURDATE()) THEN t.valor ELSE 0 END) AS total_saida_mes
-        FROM barbeiros b
-        LEFT JOIN transacao t ON t.barbeiro_id = b.id
-        GROUP BY b.id, b.nome;
+    b.id AS id, 
+    b.nome AS nome,
+    COALESCE(SUM(CASE WHEN t.tipo = 'entrada' THEN t.valor ELSE 0 END) * 0.37, 0) AS total_entrada_servicos,
+    COALESCE(SUM(IF(t.tipo = 'Produto', t.valor * 0.10, 0)), 0) AS comissao_produtos,
+    COALESCE(SUM(CASE WHEN t.tipo = 'entrada' THEN t.valor ELSE 0 END) * 0.37, 0) +
+    COALESCE(SUM(IF(t.tipo = 'Produto', t.valor * 0.10, 0)), 0) AS total_rendimento,
+    COALESCE(SUM(CASE WHEN t.tipo = 'saida' THEN t.valor ELSE 0 END), 0) AS total_saida,
+    COALESCE((SUM(CASE WHEN t.tipo = 'entrada' THEN t.valor ELSE 0 END) * 0.37) - SUM(CASE WHEN t.tipo = 'saida' THEN t.valor ELSE 0 END), 0) AS saldo,
+    COALESCE(SUM(CASE WHEN t.tipo = 'entrada' AND DATE(t.data) = CURDATE() THEN t.valor ELSE 0 END) * 0.37, 0) AS total_entrada_dia,
+    COALESCE(SUM(CASE WHEN t.tipo = 'saida' AND DATE(t.data) = CURDATE() THEN t.valor ELSE 0 END), 0) AS total_saida_dia,
+    COALESCE(SUM(CASE WHEN t.tipo = 'entrada' AND WEEK(t.data) = WEEK(CURDATE()) THEN t.valor ELSE 0 END) * 0.37, 0) AS total_entrada_semana,
+    COALESCE(SUM(CASE WHEN t.tipo = 'saida' AND WEEK(t.data) = WEEK(CURDATE()) THEN t.valor ELSE 0 END), 0) AS total_saida_semana,
+    COALESCE(SUM(CASE WHEN t.tipo = 'entrada' AND MONTH(t.data) = MONTH(CURDATE()) THEN t.valor ELSE 0 END) * 0.37, 0) AS total_entrada_mes,
+    COALESCE(SUM(CASE WHEN t.tipo = 'saida' AND MONTH(t.data) = MONTH(CURDATE()) THEN t.valor ELSE 0 END), 0) AS total_saida_mes,
+    COUNT(*) AS total_servicos,
+    COALESCE(SUM(IF(t.tipo = 'entrada' AND t.servico = 'produto', 1, 0)), 0) AS produtos
+FROM barbeiros b
+LEFT JOIN transacao t ON t.barbeiro_id = b.id
+GROUP BY b.id, b.nome
     `;
 
     db.query(queryBarbeiros, (err, resultBarbeiros) => {
@@ -48,7 +53,7 @@ app.get('/', (req, res) => {
         console.log("Resultado dos Barbeiros:", resultBarbeiros);
         const queryTransacoes = `
             SELECT
-                t.id, t.tipo, t.forma_pagamento, t.valor, t.nome_do_item,
+                t.id, t.tipo, t.forma_pagamento, t.valor, t.servico, t.nome_do_item,
                 DATE_FORMAT(t.data, '%Y-%m-%d') AS data, t.barbeiro_id, b.nome AS barbeiro
             FROM transacao t
             JOIN barbeiros b ON t.barbeiro_id = b.id;
@@ -62,6 +67,8 @@ app.get('/', (req, res) => {
                 SELECT 
                     SUM(CASE WHEN t.tipo = 'entrada' THEN t.valor ELSE 0 END) AS total_entrada,
                     SUM(CASE WHEN t.tipo = 'saida' THEN t.valor ELSE 0 END) AS total_saida,
+                    SUM(CASE WHEN t.tipo = 'entrada' THEN t.valor ELSE 0 END) -
+                    SUM(CASE WHEN t.tipo = 'saida' THEN t.valor ELSE 0 END) AS saldo_total,
                     SUM(CASE WHEN t.tipo = 'entrada' AND DATE(t.data) = CURDATE() THEN t.valor ELSE 0 END) AS total_entrada_dia,
                     SUM(CASE WHEN t.tipo = 'saida' AND DATE(t.data) = CURDATE() THEN t.valor ELSE 0 END) AS total_saida_dia,
                     SUM(CASE WHEN t.tipo = 'entrada' AND WEEK(t.data) = WEEK(CURDATE()) THEN t.valor ELSE 0 END) AS total_entrada_semana,
@@ -85,10 +92,10 @@ app.get('/', (req, res) => {
 
 // Rota para adicionar uma nova transação
 app.post('/transacao', (req, res) => {
-    const { tipo, valor, data, forma_pagamento, nome_do_item, barbeiro_id } = req.body;
-    const query = 'INSERT INTO transacao (tipo, valor, data, forma_pagamento, nome_do_item, barbeiro_id) VALUES (?, ?, ?, ?, ?, ?)';
+    const { tipo, valor, servico, forma_pagamento, nome_do_item, barbeiro_id } = req.body;
+    const query = 'INSERT INTO transacao (tipo, valor, servico, forma_pagamento, nome_do_item, barbeiro_id, data) VALUES (?, ?, ?, ?, ?, ?, CURRENT_DATE)';
     
-    db.query(query, [tipo, valor, data, forma_pagamento, nome_do_item, barbeiro_id], (err, result) => {
+    db.query(query, [tipo, valor, servico, forma_pagamento, nome_do_item, barbeiro_id], (err, result) => {
         if (err) {
             console.error(err);
             return res.status(500).send('Erro ao inserir transação.');
@@ -120,6 +127,81 @@ app.post('/delete-transacao', (req, res) => {
             return res.status(500).send('Erro ao deletar transação.');
         }
         res.redirect('/');
+    });
+});
+
+///////////////////////
+app.get('/barbeiro-servicos/:id', (req, res) => {
+    const { id } = req.params;
+    const query = `
+        SELECT 
+            COUNT(*) AS total_servicos,
+            SUM(IF(tipo = 'entrada' AND servico = 'corte', 1, 0)) AS cortes,
+            SUM(IF(tipo = 'entrada' AND servico = 'barba', 1, 0)) AS barbas,
+            SUM(IF(tipo = 'entrada' AND servico = 'produto', 1, 0)) AS produto,
+            SUM(IF(tipo = 'entrada' AND servico = 'queratina', 1, 0)) AS queratina,
+            SUM(IF(tipo = 'entrada' AND servico = 'alisamento', 1, 0)) AS alisamentos
+        FROM transacao
+        WHERE barbeiro_id = ?;
+    `;
+    db.query(query, [id], (err, result) => {
+        if (err) throw err;
+        res.json(result[0]);
+    });
+});
+
+
+// Rota para obter o relatório de rendimentos e despesas
+app.get('/barbeiro-relatorio/:id', (req, res) => {
+    const { id } = req.params;
+    const query = `
+        SELECT 
+            COALESCE(SUM(valor * 0.37), 0) AS rendimento_servicos,
+            COALESCE(SUM(IF(tipo = 'Produto', valor * 0.10, 0)), 0) AS comissao_produtos,
+            COALESCE((SUM(valor * 0.37) + SUM(IF(tipo = 'Produto', valor * 0.10, 0))), 0) AS total_rendimento
+        FROM transacao
+        WHERE barbeiro_id = ?;
+    `;
+    db.query(query, [id], (err, result) => {
+        if (err) {
+            console.error('Erro na consulta:', err);
+            res.status(500).json({ error: 'Erro na consulta' });
+            return;
+        }
+        console.log('Resultado da consulta:', result[0]); // Adicione esta linha para depuração
+        res.json(result[0]);
+    });
+});
+
+
+
+// Rota para fechamento de caixa a cada 15 dias
+app.post('/fechar-caixa', (req, res) => {
+    const { data_fechamento, valor_entradas, valor_saidas, saldo } = req.body;
+    const query = `
+        INSERT INTO fechamento_caixa (data_fechamento, valor_entradas, valor_saidas, saldo)
+        VALUES (?, ?, ?, ?);
+    `;
+    db.query(query, [data_fechamento, valor_entradas, valor_saidas, saldo], (err, result) => {
+        if (err) throw err;
+        res.redirect('/caixa');
+    });
+});
+
+// Rota para relatório mensal de receita, rendimentos, e despesas
+app.get('/relatorio-mensal/:mes/:ano', (req, res) => {
+    const { mes, ano } = req.params;
+    const query = `
+        SELECT 
+            SUM(valor) AS receita_total,
+            SUM(valor * 0.37) AS rendimentos_totais,
+            SUM(despesas) AS despesas_totais
+        FROM transacao
+        WHERE MONTH(data) = ? AND YEAR(data) = ?;
+    `;
+    db.query(query, [mes, ano], (err, result) => {
+        if (err) throw err;
+        res.json(result[0]);
     });
 });
 
