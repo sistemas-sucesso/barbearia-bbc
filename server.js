@@ -200,6 +200,35 @@ app.get('/relatorio-mensal/:mes/:ano', (req, res) => {
         res.json(result[0]);
     });
 });
+app.get('/relatorio-mensal', (req, res) => {
+    const { mes, ano } = req.query;
+
+    // Consulta SQL para somar as entradas e saídas do mês especificado
+    const query = `
+        SELECT
+            SUM(CASE WHEN tipo = 'entrada' THEN valor ELSE 0 END) AS total_entrada_mes,
+            SUM(CASE WHEN tipo = 'saida' THEN valor ELSE 0 END) AS total_saida_mes,
+            (SUM(CASE WHEN tipo = 'entrada' THEN valor ELSE 0 END) - SUM(CASE WHEN tipo = 'saida' THEN valor ELSE 0 END)) AS saldo_mes
+        FROM transacao
+        WHERE MONTH(data) = ? AND YEAR(data) = ?;
+    `;
+
+    db.query(query, [mes, ano], (err, result) => {
+        if (err) throw err;
+
+        const total_entrada_mes = parseFloat(result[0].total_entrada_mes) || 0;
+        const total_saida_mes = parseFloat(result[0].total_saida_mes) || 0;
+        const saldo_mes = parseFloat(result[0].saldo_mes) || 0;
+
+        res.render('relatorio_mensal', {
+            mes: mes,
+            ano: ano,
+            total_entrada_mes: total_entrada_mes,
+            total_saida_mes: total_saida_mes,
+            saldo_mes: saldo_mes
+        });
+    });
+});
 
 app.listen(3001, () => {
     console.log('Servidor rodando na porta 3001');
