@@ -427,6 +427,10 @@
         <p class="relatorio">Total Entrada do Mês: R$ <%= relatorio.total_entrada_mes %></p>
         <p class="relatorio">Total Saida do Mês: R$ <%= relatorio.total_saida_mes %></p>
     </div>
+<h2>Fechamento de Caixa</h2>
+        <form action="/fechar-caixa" method="POST">
+            <button type="submit">Fechar Caixa</button>
+        </form>
     <div class="containers">
         <h1>Relatório de Barbeiros</h1>
 
