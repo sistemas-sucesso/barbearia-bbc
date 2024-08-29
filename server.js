@@ -92,10 +92,10 @@ GROUP BY b.id, b.nome
 
 // Rota para adicionar uma nova transação
 app.post('/transacao', (req, res) => {
-    const { tipo, valor, servico, forma_pagamento, nome_do_item, barbeiro_id } = req.body;
-    const query = 'INSERT INTO transacao (tipo, valor, servico, forma_pagamento, nome_do_item, barbeiro_id, data) VALUES (?, ?, ?, ?, ?, ?, CURRENT_DATE)';
+    const { tipo, valor, servico, forma_pagamento, barbeiro_id } = req.body;
+    const query = 'INSERT INTO transacao (tipo, valor, servico, forma_pagamento, barbeiro_id, data) VALUES (?, ?, ?, ?, ?, CURRENT_DATE)';
     
-    db.query(query, [tipo, valor, servico, forma_pagamento, nome_do_item, barbeiro_id], (err, result) => {
+    db.query(query, [tipo, valor, servico, forma_pagamento, barbeiro_id], (err, result) => {
         if (err) {
             console.error(err);
             return res.status(500).send('Erro ao inserir transação.');
