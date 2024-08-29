@@ -26,37 +26,37 @@ db.connect(err => {
 // Rota para obter os dados dos barbeiros e suas transações
 app.get('/', (req, res) => {
     const queryBarbeiros = `
-        SELECT
-    b.id AS id, 
-    b.nome AS nome,
-    COALESCE(SUM(CASE WHEN t.tipo = 'entrada' THEN t.valor ELSE 0 END) * 0.37, 0) AS total_entrada_servicos,
-    COALESCE(SUM(IF(t.tipo = 'Produto', t.valor * 0.10, 0)), 0) AS comissao_produtos,
-    COALESCE(SUM(CASE WHEN t.tipo = 'entrada' THEN t.valor ELSE 0 END) * 0.37, 0) +
-    COALESCE(SUM(IF(t.tipo = 'Produto', t.valor * 0.10, 0)), 0) AS total_rendimento,
-    COALESCE(SUM(CASE WHEN t.tipo = 'saida' THEN t.valor ELSE 0 END), 0) AS total_saida,
-    COALESCE((SUM(CASE WHEN t.tipo = 'entrada' THEN t.valor ELSE 0 END) * 0.37) - SUM(CASE WHEN t.tipo = 'saida' THEN t.valor ELSE 0 END), 0) AS saldo,
-    COALESCE(SUM(CASE WHEN t.tipo = 'entrada' AND DATE(t.data) = CURDATE() THEN t.valor ELSE 0 END) * 0.37, 0) AS total_entrada_dia,
-    COALESCE(SUM(CASE WHEN t.tipo = 'saida' AND DATE(t.data) = CURDATE() THEN t.valor ELSE 0 END), 0) AS total_saida_dia,
-    COALESCE(SUM(CASE WHEN t.tipo = 'entrada' AND WEEK(t.data) = WEEK(CURDATE()) THEN t.valor ELSE 0 END) * 0.37, 0) AS total_entrada_semana,
-    COALESCE(SUM(CASE WHEN t.tipo = 'saida' AND WEEK(t.data) = WEEK(CURDATE()) THEN t.valor ELSE 0 END), 0) AS total_saida_semana,
-    COALESCE(SUM(CASE WHEN t.tipo = 'entrada' AND MONTH(t.data) = MONTH(CURDATE()) THEN t.valor ELSE 0 END) * 0.37, 0) AS total_entrada_mes,
-    COALESCE(SUM(CASE WHEN t.tipo = 'saida' AND MONTH(t.data) = MONTH(CURDATE()) THEN t.valor ELSE 0 END), 0) AS total_saida_mes,
-    COUNT(*) AS total_servicos,
-    COALESCE(SUM(IF(t.tipo = 'entrada' AND t.servico = 'produto', 1, 0)), 0) AS produtos
-FROM barbeiros b
-LEFT JOIN transacao t ON t.barbeiro_id = b.id
-GROUP BY b.id, b.nome
+      SELECT
+        b.id AS id, 
+        b.nome AS nome,
+        COALESCE(SUM(CASE WHEN t.tipo = 'entrada' AND t.fechado = FALSE THEN t.valor ELSE 0 END) * 0.37, 0) AS total_entrada_servicos,
+        COALESCE(SUM(IF(t.tipo = 'Produto' AND t.fechado = FALSE, t.valor * 0.10, 0)), 0) AS comissao_produtos,
+        COALESCE(SUM(CASE WHEN t.tipo = 'entrada' AND t.fechado = FALSE THEN t.valor ELSE 0 END) * 0.37, 0) +
+        COALESCE(SUM(IF(t.tipo = 'Produto' AND t.fechado = FALSE, t.valor * 0.10, 0)), 0) AS total_rendimento,
+        COALESCE(SUM(CASE WHEN t.tipo = 'saida' AND t.fechado = FALSE THEN t.valor ELSE 0 END), 0) AS total_saida,
+        COALESCE((SUM(CASE WHEN t.tipo = 'entrada' AND t.fechado = FALSE THEN t.valor ELSE 0 END) * 0.37) - SUM(CASE WHEN t.tipo = 'saida' AND t.fechado = FALSE THEN t.valor ELSE 0 END), 0) AS saldo,
+        COALESCE(SUM(CASE WHEN t.tipo = 'entrada' AND DATE(t.data) = CURDATE() AND t.fechado = FALSE THEN t.valor ELSE 0 END) * 0.37, 0) AS total_entrada_dia,
+        COALESCE(SUM(CASE WHEN t.tipo = 'saida' AND DATE(t.data) = CURDATE() AND t.fechado = FALSE THEN t.valor ELSE 0 END), 0) AS total_saida_dia,
+        COALESCE(SUM(CASE WHEN t.tipo = 'entrada' AND WEEK(t.data) = WEEK(CURDATE()) AND t.fechado = FALSE THEN t.valor ELSE 0 END) * 0.37, 0) AS total_entrada_semana,
+        COALESCE(SUM(CASE WHEN t.tipo = 'saida' AND WEEK(t.data) = WEEK(CURDATE()) AND t.fechado = FALSE THEN t.valor ELSE 0 END), 0) AS total_saida_semana,
+        COALESCE(SUM(CASE WHEN t.tipo = 'entrada' AND MONTH(t.data) = MONTH(CURDATE()) AND t.fechado = FALSE THEN t.valor ELSE 0 END) * 0.37, 0) AS total_entrada_mes,
+        COALESCE(SUM(CASE WHEN t.tipo = 'saida' AND MONTH(t.data) = MONTH(CURDATE()) AND t.fechado = FALSE THEN t.valor ELSE 0 END), 0) AS total_saida_mes,
+        COUNT(*) AS total_servicos,
+        COALESCE(SUM(IF(t.tipo = 'entrada' AND t.servico = 'produto' AND t.fechado = FALSE, 1, 0)), 0) AS produtos
+    FROM barbeiros b
+    LEFT JOIN transacao t ON t.barbeiro_id = b.id
+    GROUP BY b.id, b.nome
     `;
 
     db.query(queryBarbeiros, (err, resultBarbeiros) => {
         if (err) throw err;
         console.log("Resultado dos Barbeiros:", resultBarbeiros);
         const queryTransacoes = `
-            SELECT
-                t.id, t.tipo, t.forma_pagamento, t.valor, t.servico, t.nome_do_item,
-                DATE_FORMAT(t.data, '%Y-%m-%d') AS data, t.barbeiro_id, b.nome AS barbeiro
-            FROM transacao t
-            JOIN barbeiros b ON t.barbeiro_id = b.id;
+           SELECT
+        t.id, t.tipo, t.forma_pagamento, t.valor, t.servico, t.nome_do_item,
+        DATE_FORMAT(t.data, '%Y-%m-%d') AS data, t.barbeiro_id, b.nome AS barbeiro, t.fechado
+    FROM transacao t
+    JOIN barbeiros b ON t.barbeiro_id = b.id
         `;
         
         db.query(queryTransacoes, (err, transacoes) => {
@@ -64,18 +64,18 @@ GROUP BY b.id, b.nome
             console.log("Resultado das Transações:", queryTransacoes);
             console.log("Resultado das Transações:", transacoes);
             const queryRelatorio = `
-                SELECT 
-                    SUM(CASE WHEN t.tipo = 'entrada' THEN t.valor ELSE 0 END) AS total_entrada,
-                    SUM(CASE WHEN t.tipo = 'saida' THEN t.valor ELSE 0 END) AS total_saida,
-                    SUM(CASE WHEN t.tipo = 'entrada' THEN t.valor ELSE 0 END) -
-                    SUM(CASE WHEN t.tipo = 'saida' THEN t.valor ELSE 0 END) AS saldo_total,
-                    SUM(CASE WHEN t.tipo = 'entrada' AND DATE(t.data) = CURDATE() THEN t.valor ELSE 0 END) AS total_entrada_dia,
-                    SUM(CASE WHEN t.tipo = 'saida' AND DATE(t.data) = CURDATE() THEN t.valor ELSE 0 END) AS total_saida_dia,
-                    SUM(CASE WHEN t.tipo = 'entrada' AND WEEK(t.data) = WEEK(CURDATE()) THEN t.valor ELSE 0 END) AS total_entrada_semana,
-                    SUM(CASE WHEN t.tipo = 'saida' AND WEEK(t.data) = WEEK(CURDATE()) THEN t.valor ELSE 0 END) AS total_saida_semana,
-                    SUM(CASE WHEN t.tipo = 'entrada' AND MONTH(t.data) = MONTH(CURDATE()) THEN t.valor ELSE 0 END) AS total_entrada_mes,
-                    SUM(CASE WHEN t.tipo = 'saida' AND MONTH(t.data) = MONTH(CURDATE()) THEN t.valor ELSE 0 END) AS total_saida_mes
-                FROM transacao t;
+               SELECT 
+        SUM(CASE WHEN t.tipo = 'entrada' AND t.fechado = FALSE THEN t.valor ELSE 0 END) AS total_entrada,
+        SUM(CASE WHEN t.tipo = 'saida' AND t.fechado = FALSE THEN t.valor ELSE 0 END) AS total_saida,
+        SUM(CASE WHEN t.tipo = 'entrada' AND t.fechado = FALSE THEN t.valor ELSE 0 END) -
+        SUM(CASE WHEN t.tipo = 'saida' AND t.fechado = FALSE THEN t.valor ELSE 0 END) AS saldo_total,
+        SUM(CASE WHEN t.tipo = 'entrada' AND DATE(t.data) = CURDATE() AND t.fechado = FALSE THEN t.valor ELSE 0 END) AS total_entrada_dia,
+        SUM(CASE WHEN t.tipo = 'saida' AND DATE(t.data) = CURDATE() AND t.fechado = FALSE THEN t.valor ELSE 0 END) AS total_saida_dia,
+        SUM(CASE WHEN t.tipo = 'entrada' AND WEEK(t.data) = WEEK(CURDATE()) AND t.fechado = FALSE THEN t.valor ELSE 0 END) AS total_entrada_semana,
+        SUM(CASE WHEN t.tipo = 'saida' AND WEEK(t.data) = WEEK(CURDATE()) AND t.fechado = FALSE THEN t.valor ELSE 0 END) AS total_saida_semana,
+        SUM(CASE WHEN t.tipo = 'entrada' AND MONTH(t.data) = MONTH(CURDATE()) AND t.fechado = FALSE THEN t.valor ELSE 0 END) AS total_entrada_mes,
+        SUM(CASE WHEN t.tipo = 'saida' AND MONTH(t.data) = MONTH(CURDATE()) AND t.fechado = FALSE THEN t.valor ELSE 0 END) AS total_saida_mes
+    FROM transacao t
             `;
 
             db.query(queryRelatorio, (err, resultRelatorio) => {
@@ -177,14 +177,10 @@ app.get('/barbeiro-relatorio/:id', (req, res) => {
 
 // Rota para fechamento de caixa a cada 15 dias
 app.post('/fechar-caixa', (req, res) => {
-    const { data_fechamento, valor_entradas, valor_saidas, saldo } = req.body;
-    const query = `
-        INSERT INTO fechamento_caixa (data_fechamento, valor_entradas, valor_saidas, saldo)
-        VALUES (?, ?, ?, ?);
-    `;
-    db.query(query, [data_fechamento, valor_entradas, valor_saidas, saldo], (err, result) => {
+    const query = 'UPDATE transacao SET fechado = TRUE WHERE fechado = FALSE';
+    db.query(query, (err, result) => {
         if (err) throw err;
-        res.redirect('/caixa');
+        res.redirect('/');
     });
 });
 
