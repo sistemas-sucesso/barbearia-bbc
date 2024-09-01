@@ -115,14 +115,28 @@ app.get('/', (req, res, next) => {
     });
 });
 
+// Rota para adicionar uma nova transação
 app.post('/transacao', (req, res, next) => {
-    const { tipo, valor, servico, forma_pagamento, barbeiro_id } = req.body;
-    const query = 'INSERT INTO transacao (tipo, valor, servico, forma_pagamento, barbeiro_id, data) VALUES (?, ?, ?, ?, ?, CURRENT_DATE)';
+    const { tipo, valor, servico, forma_pagamento, barbeiro_id, nome_do_item } = req.body;
 
-    db.query(query, [tipo, valor, servico, forma_pagamento, barbeiro_id], (err, result) => {
-        if (err) return next(err);
-        res.redirect('/');
-    });
+    // Validação básica dos dados de entrada
+    if (!tipo || !valor || !servico || !forma_pagamento || !barbeiro_id) {
+        return res.status(400).json({ error: 'Todos os campos são obrigatórios.' });
+    }
+
+    const query = `
+        INSERT INTO transacao (tipo, valor, servico, forma_pagamento, barbeiro_id, nome_do_item, data)
+        VALUES (?, ?, ?, ?, ?, ?, CURRENT_DATE)
+    `;
+
+    db.query(
+        query,
+        [tipo, valor, servico, forma_pagamento, barbeiro_id, nome_do_item || null],
+        (err, result) => {
+            if (err) return next(err);
+            res.status(201).json({ message: 'Transação adicionada com sucesso.', transacaoId: result.insertId });
+        }
+    );
 });
 
 // Rota para editar uma transação existente
