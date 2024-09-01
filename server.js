@@ -53,10 +53,23 @@ app.get('/', (req, res) => {
         console.log("Resultado dos Barbeiros:", resultBarbeiros);
         const queryTransacoes = `
            SELECT
-        t.id, t.tipo, t.forma_pagamento, t.valor, t.servico, t.nome_do_item,
-        DATE_FORMAT(t.data, '%Y-%m-%d') AS data, t.barbeiro_id, b.nome AS barbeiro, t.fechado
-    FROM transacao t
-    JOIN barbeiros b ON t.barbeiro_id = b.id
+    t.id,
+    t.tipo,
+    t.forma_pagamento,
+    t.valor,
+    t.servico,
+    t.nome_do_item,
+    DATE_FORMAT(t.data, '%Y-%m-%d') AS data,
+    t.barbeiro_id,
+    b.nome AS barbeiro,
+    t.fechado
+FROM
+    transacao t
+JOIN
+    barbeiros b ON t.barbeiro_id = b.id
+WHERE
+    DATE(t.data) = CURDATE();
+
         `;
         
         db.query(queryTransacoes, (err, transacoes) => {
