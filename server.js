@@ -244,10 +244,6 @@ app.post('/fechar-caixa', (req, res, next) => {
 app.get('/relatorio-mensal', (req, res, next) => {
     const { mes, ano } = req.query;
 
-    if (!mes || !ano) {
-        return res.status(400).json({ error: 'Parâmetros "mes" e "ano" são obrigatórios.' });
-    }
-
     const query = `
         SELECT
             COALESCE(SUM(CASE WHEN tipo = 'entrada' THEN valor END), 0) AS total_entrada_mes,
