@@ -535,12 +535,12 @@
                 .then(response => response.json())
                 .then(data => {
                     console.log("Resultado", data);                    
-                    element.innerHTML = 
+                    element.innerHTML = `
                         <p>Total de Serviços: ${data.total_servicos}</p>
                         <p>Cortes: ${data.cortes}</p>
                         <p>Barbas: ${data.barbas}</p>
                         <p>Progressiva: ${data.progressivas}</p>
-                        <p>Produtos: ${data.produtos}</p>                        
+                        <p>Produtos: ${data.produtos}</p>`                        
                     ;
                 });
         }
