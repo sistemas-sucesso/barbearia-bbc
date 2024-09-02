@@ -193,8 +193,8 @@ app.get('/barbeiro-servicos/:id', (req, res, next) => {
             SUM(CASE WHEN tipo = 'entrada' AND servico = 'corte' THEN 1 END) AS cortes,
             SUM(CASE WHEN tipo = 'entrada' AND servico = 'barba' THEN 1 END) AS barbas,
             SUM(CASE WHEN tipo = 'entrada' AND servico = 'produto' THEN 1 END) AS produtos,
-            SUM(CASE WHEN tipo = 'entrada' AND servico = 'queratina' THEN 1 END) AS queratinas,
-            SUM(CASE WHEN tipo = 'entrada' AND servico = 'alisamento' THEN 1 END) AS alisamentos
+            SUM(CASE WHEN tipo = 'entrada' AND servico = 'progressiva' THEN 1 END) AS progressivas,
+            SUM(CASE WHEN tipo = 'entrada' AND servico = 'queratina' THEN 1 END) AS queratina
         FROM
             transacao
         WHERE
