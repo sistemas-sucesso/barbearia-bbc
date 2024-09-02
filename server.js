@@ -190,11 +190,11 @@ app.get('/barbeiro-servicos/:id', (req, res, next) => {
     const query = `
         SELECT 
             COUNT(*) AS total_servicos,
-            SUM(CASE WHEN tipo = 'entrada' AND servico = 'corte' THEN 1 END) AS cortes,
-            SUM(CASE WHEN tipo = 'entrada' AND servico = 'barba' THEN 1 END) AS barbas,
-            SUM(CASE WHEN tipo = 'entrada' AND servico = 'produto' THEN 1 END) AS produtos,
-            SUM(CASE WHEN tipo = 'entrada' AND servico = 'progressiva' THEN 1 END) AS progressivas,
-            SUM(CASE WHEN tipo = 'entrada' AND servico = 'queratina' THEN 1 END) AS queratina
+            SUM(CASE WHEN tipo = 'entrada' AND servico = 'corte' THEN 1 ELSE 0 END) AS cortes,
+            SUM(CASE WHEN tipo = 'entrada' AND servico = 'barba' THEN 1 ELSE 0 END) AS barbas,
+            SUM(CASE WHEN tipo = 'entrada' AND servico = 'produto' THEN 1 ELSE 0 END) AS produtos,
+            SUM(CASE WHEN tipo = 'entrada' AND servico = 'progressiva' THEN 1 ELSE 0 END) AS progressivas,
+            SUM(CASE WHEN tipo = 'entrada' AND servico = 'queratina' THEN 1 ELSE 0 END) AS queratina
         FROM
             transacao
         WHERE
@@ -206,6 +206,7 @@ app.get('/barbeiro-servicos/:id', (req, res, next) => {
         res.json(result[0]);
     });
 });
+
 
 // Rota para obter o relatório de rendimentos e despesas de um barbeiro específico
 app.get('/barbeiro-relatorio/:id', (req, res, next) => {
