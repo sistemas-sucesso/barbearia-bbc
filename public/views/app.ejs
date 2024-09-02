@@ -536,11 +536,12 @@
                 .then(data => {
                     console.log("Resultado", data);                    
                     element.innerHTML = `
-                        <p>Total de Serviços: ${data.total_servicos}</p>
-                        <p>Cortes: ${data.cortes}</p>
-                        <p>Barbas: ${data.barbas}</p>
-                        <p>Progressiva: ${data.progressivas}</p>
-                        <p>Produtos: ${data.produtos}</p>                        
+                        <p>Serviços: ${data.total_servicos}</p>
+                        <p>cortes: ${dadosBarbeiros.joao.cortes}</p>
+        <p>barbas: ${dadosBarbeiros.joao.barbas}</p>
+        <p>progressivas: ${dadosBarbeiros.joao.progressivas}</p>
+        <p>alisamentos: ${dadosBarbeiros.joao.alisamentos}</p>
+        <p>produtos: ${dadosBarbeiros.joao.produtos}</p>                       
                     `;
                 });
         }
