@@ -134,7 +134,7 @@ app.post('/transacao', (req, res, next) => {
         [tipo, valor, servico, forma_pagamento, barbeiro_id, nome_do_item || null],
         (err, result) => {
             if (err) return next(err);
-            res.status(201).json({ message: 'Transação adicionada com sucesso.', transacaoId: result.insertId });
+           res.redirect('/');
         }
     );
 });
@@ -163,7 +163,7 @@ app.put('/transacao/:id', (req, res, next) => {
             if (result.affectedRows === 0) {
                 return res.status(404).json({ error: 'Transação não encontrada.' });
             }
-            res.json({ message: 'Transação atualizada com sucesso.' });
+           res.redirect('/');
         }
     );
 });
@@ -179,7 +179,7 @@ app.delete('/transacao/:id', (req, res, next) => {
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: 'Transação não encontrada.' });
         }
-        res.json({ message: 'Transação deletada com sucesso.' });
+        res.redirect('/');
     });
 });
 
