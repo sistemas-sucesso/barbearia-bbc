@@ -242,6 +242,13 @@
         .desc{
             width: 130px;
         }
+.table-wrapper {
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: auto;
+    border: 1px solid #ccc; /* opcional: adiciona uma borda ao redor da tabela */
+    padding: 10px; /* opcional: adiciona espaçamento ao redor da tabela */
+}
     </style>
 </head>
 <body>
@@ -303,6 +310,7 @@
         
 
         <h2>Barbeiros</h2>
+<div class="table-wrapper">
         <table id="transacoesTable1" style="display:none;">
             <thead>
                 <tr>
@@ -325,23 +333,23 @@
                 <% barbeiros.forEach(barbeiro => { %>
                     <tr>
                         <td><%= barbeiro.nome %></td>
-                        <td>R$ <%= barbeiro.total_entrada_servicos %></td>
-                        <td>R$ <%= barbeiro.comissao_produtos %></td>
-                        <td>R$ <%= barbeiro.total_rendimento %></td>
-                        <td>R$ <%= barbeiro.total_entrada %></td>
-                        <td>R$ <%= barbeiro.total_saida %></td>
-                        <td>R$ <%= barbeiro.saldo %></td>
-                        <td>R$ <%= barbeiro.total_entrada_dia %></td>
-                        <td>R$ <%= barbeiro.total_saida_dia %></td>
-                        <td>R$ <%= barbeiro.total_entrada_semana %></td>
-                        <td>R$ <%= barbeiro.total_saida_semana %></td>
-                        <td>R$ <%= barbeiro.total_entrada_mes %></td>
-                        <td>R$ <%= barbeiro.total_saida_mes %></td>
+                       <td>R$ <%= barbeiro.total_entrada_servicos.toFixed(2) %></td>
+<td>R$ <%= barbeiro.comissao_produtos.toFixed(2) %></td>
+<td>R$ <%= barbeiro.total_rendimento.toFixed(2) %></td>
+<td>R$ <%= barbeiro.total_entrada.toFixed(2) %></td>
+<td>R$ <%= barbeiro.total_saida.toFixed(2) %></td>
+<td>R$ <%= barbeiro.saldo.toFixed(2) %></td>
+<td>R$ <%= barbeiro.total_entrada_dia.toFixed(2) %></td>
+<td>R$ <%= barbeiro.total_saida_dia.toFixed(2) %></td>
+<td>R$ <%= barbeiro.total_entrada_semana.toFixed(2) %></td>
+<td>R$ <%= barbeiro.total_saida_semana.toFixed(2) %></td>
+<td>R$ <%= barbeiro.total_entrada_mes.toFixed(2) %></td>
+<td>R$ <%= barbeiro.total_saida_mes.toFixed(2) %></td>
                     </tr>
                 <% }) %>
             </tbody>
         </table>
-
+</div>
        <button id="toggleTableBtn" style="background-color: #ffc107;">Mostrar Transações</button>
 
 <h2>Transações</h2>
