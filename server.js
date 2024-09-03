@@ -15,10 +15,10 @@ app.use(cors());
 
 // Configuração da conexão com o banco de dados usando variáveis de ambiente
 const db = mysql.createConnection({
-    host: 'b9lsqlxrc1wrcggnqosi-mysql.services.clever-cloud.com',
-    user: 'ugcnyroeqou4hr6n',
-    password: 'fmIducXVC9LOVxi6KgPB',
-    database: 'b9lsqlxrc1wrcggnqosi'
+   host: 'bqsq4wcwo96tjrtkayqh-mysql.services.clever-cloud.com',
+    user: 'uznzyrs16dukt4uv',
+    password: '8dIuErPxkc8Zv97frYd2',
+    database: 'bqsq4wcwo96tjrtkayqh'
 });
 
 db.connect(err => {
