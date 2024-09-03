@@ -239,6 +239,9 @@
             font-size: 15px;
             padding: 5px;
         }
+        .desc{
+            width: 130px;
+        }
     </style>
 </head>
 <body>
@@ -249,7 +252,8 @@
         <button class="show-hide-btn" onclick="toggleForm()">Adicionar Transação</button>
         <form id="transaction-form" action="/transacao" method="post" style="display:none;">
             <h2>Adicionar Nova Transação</h2>
-                  
+            <label for="edit-nome_do_item">Descrição:</label>
+            <input style="width: 180px;" type="text" id="edit-nome_do_item" name="nome_do_item" >     
             <label for="tipo">Tipo:</label>
             <div class="radio-group">
                 <input type="radio" id="entrada" name="tipo" value="entrada" required>
@@ -266,10 +270,10 @@
                 <label for="barba">Barba</label>
                 <input type="radio" id="progressiva" name="servico" value="progressiva" required>
                 <label for="progressiva">Progressiva</label>
-                <input type="radio" id="alinhamento" name="servico" value="alinhamento" required>
-                <label for="alinhamento">Alizamento</label>
                 <input type="radio" id="produto" name="servico" value="produto" required>
                 <label for="produto">Produto</label>
+                <input type="radio" id="said" name="servico" value="saida" required>
+                <label for="alinhamento">Salário/Vale/Saída</label>
             </div>
         
             <label for="valor">Valor:</label>
@@ -350,6 +354,7 @@
                     <th>Valor</th>
                     <th>Data</th>
                     <th>Forma de Pagamento</th>
+                    <th>Descrição</th>
                     <th>Barbeiro</th>
                     <th>Ações</th>
                 </tr>
@@ -360,9 +365,10 @@
                         <td><%= transacao.id %></td>
                         <td><%= transacao.servico %></td>
                         <td><%= transacao.tipo %></td>
-                        <td>R$ <%= transacao.valor %></td>
+                        <td>R$ <%= transacao.valor %></td>                        
                         <td><%= transacao.data %></td>
                         <td><%= transacao.forma_pagamento %></td>
+                        <td><%= transacao.nome_do_item %></td>
                         <td><%= transacao.barbeiro %></td>
                         <td>
                             <button class="edit" onclick="editTransaction('<%= transacao.id %>', '<%= escape(transacao.nome_do_item) %>', '<%= transacao.tipo %>', '<%= transacao.valor %>', '<%= transacao.data %>', '<%= transacao.forma_pagamento %>', '<%= transacao.barbeiro_id %>')">Editar</button>
@@ -382,8 +388,8 @@
             <h2>Editar Transação</h2>
             <input type="hidden" id="edit-id" name="id">
             
-            <label for="edit-nome_do_item">Nome do Item:</label>
-            <input type="text" id="edit-nome_do_item" name="nome_do_item" required>
+            <label for="edit-nome_do_item">Descrição:</label>
+            <input type="text" id="edit-nome_do_item-modal" name="nome_do_item" required>
 
             <label for="edit-tipo">Tipo:</label>
             <select id="edit-tipo" name="tipo" required>
@@ -399,9 +405,9 @@
 
             <label for="edit-forma_pagamento">Forma de Pagamento:</label>
             <select id="edit-forma_pagamento" name="forma_pagamento" required>
-                <option value="pix">Pix</option>
-                <option value="cartao">Cartão</option>
-                <option value="dinheiro">Dinheiro</option>
+                <option value="Pix">Pix</option>
+                <option value="Cartao">Cartão</option>
+                <option value="Dinheiro">Dinheiro</option>
             </select>
 
             <label for="edit-barbeiro_id">Barbeiro:</label>
@@ -436,13 +442,13 @@
 
         <div class="tabs">
             <ul>
-                <li><a href="#tab-joao">Kiko</a></li>
-                <li><a href="#tab-marcos">Júnior</a></li>
+                <li><a href="#tab-joao">Júnio</a></li>
+                <li><a href="#tab-marcos">Kiko</a></li>
                 <li><a href="#tab-henrique">Deivid</a></li>
             </ul>
 
             <div id="tab-joao" class="tab-content">
-                <h2>Serviços Realizados por Kiko</h2>
+                <h2>Serviços Realizados por Júnior</h2>
                 <div id="servicos-joao"></div>
 
                 <h2>Relatório de Rendimentos</h2>
@@ -450,7 +456,7 @@
             </div>
 
             <div id="tab-marcos" class="tab-content">
-                <h2>Serviços Realizados por Júnior</h2>
+                <h2>Serviços Realizados por Kiko</h2>
                 <div id="servicos-marcos"></div>
 
                 <h2>Relatório de Rendimentos</h2>
@@ -474,17 +480,24 @@
         }
 
         function editTransaction(id, nome_do_item, tipo, valor, data, forma_pagamento, barbeiro_id) {
+            console.log("Valores recebidos:", { id, nome_do_item, tipo, valor, data, forma_pagamento, barbeiro_id });
             alert("barbeiro_id:", barbeiro_id);
             console.log("barbeiro_id:", barbeiro_id);
             const form = document.getElementById('edit-transaction-form');
             form.style.display = 'block';
 
             document.getElementById('edit-id').value = id;
-            document.getElementById('edit-nome_do_item').value = nome_do_item;
+            document.getElementById('edit-nome_do_item-modal').value = nome_do_item;
             document.getElementById('edit-tipo').value = tipo;
             document.getElementById('edit-valor').value = valor;
             document.getElementById('edit-data').value = data;
-            document.getElementById('edit-forma_pagamento').value = forma_pagamento;
+            const formaPagamentoElement = document.getElementById('edit-forma_pagamento');
+    if (formaPagamentoElement) {
+        formaPagamentoElement.value = forma_pagamento;
+        console.log("Valor do select forma_pagamento:", formaPagamentoElement.value); // Verifique se o valor é correto
+    } else {
+        console.error("Campo 'edit-forma_pagamento' não encontrado.");
+    }
             const selectBarbeiro = document.getElementById('edit-barbeiro_id');
             if (selectBarbeiro) {
                 selectBarbeiro.value = barbeiro_id;
@@ -540,7 +553,8 @@
                         <p>Cortes: ${data.cortes}</p>
                         <p>Barbas: ${data.barbas}</p>
                         <p>Progressiva: ${data.progressivas}</p>
-                        <p>Produtos: ${data.produtos}</p>`                        
+                        <p>Produtos: ${data.produtos}</p>                       
+                        <p>Salário/vale: ${data.saidas}</p>`                        
                     ;
                 });
         }
@@ -586,24 +600,24 @@
         carregarRelatorio(2, relatorioMarcos);
         carregarRelatorio(3, relatorioHenrique);
     
-        const formRelatorioMensal = document.getElementById('relatorio-mensal-form');
-        const relatorioMensal = document.getElementById('relatorio-mensal');
+        //const formRelatorioMensal = document.getElementById('relatorio-mensal-form');
+       // const relatorioMensal = document.getElementById('relatorio-mensal');
     
-        formRelatorioMensal.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const mes = document.getElementById('mes').value;
-            const ano = document.getElementById('ano').value;
+       // formRelatorioMensal.addEventListener('submit', function(e) {
+        //    e.preventDefault();
+         //   const mes = document.getElementById('mes').value;
+         //   const ano = document.getElementById('ano').value;
     
-            fetch(`/relatorio-mensal/${mes}/${ano}`)
-                .then(response => response.json())
-                .then(data => {
-                    relatorioMensal.innerHTML = `
-                        <p>Receita Total: R$${data.receita_total.toFixed(2)}</p>
-                        <p>Rendimentos Totais: R$${data.rendimentos_totais.toFixed(2)}</p>
-                        <p>Despesas Totais: R$${data.despesas_totais.toFixed(2)}</p>
-                    `;
-                });
-        });
+          //  fetch(`/relatorio-mensal/${mes}/${ano}`)
+           //     .then(response => response.json())
+           //     .then(data => {
+            //        relatorioMensal.innerHTML = `
+            //            <p>Receita Total: R$${data.receita_total.toFixed(2)}</p>
+            //            <p>Rendimentos Totais: R$${data.rendimentos_totais.toFixed(2)}</p>
+             //           <p>Despesas Totais: R$${data.despesas_totais.toFixed(2)}</p>
+             //       `;
+             //   });
+       // });
     });
     
     document.addEventListener('DOMContentLoaded', () => {
@@ -627,6 +641,17 @@
         const form = document.getElementById('transaction-form');
         form.style.display = form.style.display === 'none' ? 'block' : 'none';
     }
+    document.addEventListener('DOMContentLoaded', () => {
+        const deleteButtons = document.querySelectorAll('.delete');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                // Aqui pode estar o código para confirmação de exclusão
+                if (!confirm('Você tem certeza que deseja deletar?')) {
+                    event.preventDefault();
+                }
+            });
+        });
+    });
     </script>
 </body>
 </html>
