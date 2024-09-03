@@ -89,17 +89,18 @@ app.get('/', (req, res, next) => {
 
             const queryRelatorio = `
                 SELECT 
-                    COALESCE(SUM(CASE WHEN tipo = 'entrada' AND fechado = FALSE THEN valor END), 0) AS total_entrada,
-                    COALESCE(SUM(CASE WHEN tipo = 'saida' AND fechado = FALSE THEN valor END), 0) AS total_saida,
-                    COALESCE(SUM(CASE WHEN tipo = 'entrada' AND fechado = FALSE THEN valor END) - SUM(CASE WHEN tipo = 'saida' AND fechado = FALSE THEN valor END), 0) AS saldo_total,
-                    COALESCE(SUM(CASE WHEN tipo = 'entrada' AND DATE(data) = CURDATE() AND fechado = FALSE THEN valor END), 0) AS total_entrada_dia,
-                    COALESCE(SUM(CASE WHEN tipo = 'saida' AND DATE(data) = CURDATE() AND fechado = FALSE THEN valor END), 0) AS total_saida_dia,
-                    COALESCE(SUM(CASE WHEN tipo = 'entrada' AND WEEK(data, 1) = WEEK(CURDATE(), 1) AND fechado = FALSE THEN valor END), 0) AS total_entrada_semana,
-                    COALESCE(SUM(CASE WHEN tipo = 'saida' AND WEEK(data, 1) = WEEK(CURDATE(), 1) AND fechado = FALSE THEN valor END), 0) AS total_saida_semana,
-                    COALESCE(SUM(CASE WHEN tipo = 'entrada' AND MONTH(data) = MONTH(CURDATE()) AND fechado = FALSE THEN valor END), 0) AS total_entrada_mes,
-                    COALESCE(SUM(CASE WHEN tipo = 'saida' AND MONTH(data) = MONTH(CURDATE()) AND fechado = FALSE THEN valor END), 0) AS total_saida_mes
-                FROM
-                    transacao
+    COALESCE(SUM(CASE WHEN tipo = 'entrada' AND fechado = FALSE THEN valor END), 0) AS total_entrada,
+    COALESCE(SUM(CASE WHEN tipo = 'saida' AND fechado = FALSE THEN valor END), 0) AS total_saida,
+    COALESCE(SUM(CASE WHEN tipo = 'entrada' AND fechado = FALSE THEN valor END) - SUM(CASE WHEN tipo = 'saida' AND fechado = FALSE THEN valor END), 0) AS saldo_total,
+    COALESCE(SUM(CASE WHEN tipo = 'entrada' AND DATE(data) = CURDATE() AND fechado = FALSE THEN valor END), 0) AS total_entrada_dia,
+    COALESCE(SUM(CASE WHEN tipo = 'saida' AND DATE(data) = CURDATE() AND fechado = FALSE THEN valor END), 0) AS total_saida_dia,
+    COALESCE(SUM(CASE WHEN tipo = 'entrada' AND WEEK(data, 1) = WEEK(CURDATE(), 1) AND fechado = FALSE THEN valor END), 0) AS total_entrada_semana,
+    COALESCE(SUM(CASE WHEN tipo = 'saida' AND WEEK(data, 1) = WEEK(CURDATE(), 1) AND fechado = FALSE THEN valor END), 0) AS total_saida_semana,
+    COALESCE(SUM(CASE WHEN tipo = 'entrada' AND MONTH(data) = MONTH(CURDATE()) AND fechado = FALSE THEN valor END), 0) AS total_entrada_mes,
+    COALESCE(SUM(CASE WHEN tipo = 'saida' AND MONTH(data) = MONTH(CURDATE()) AND fechado = FALSE THEN valor END), 0) AS total_saida_mes,
+    COALESCE(SUM(CASE WHEN tipo = 'entrada' AND fechado = FALSE THEN valor END) - SUM(CASE WHEN tipo = 'saida' AND fechado = FALSE THEN valor END), 0) AS saldo_total
+FROM
+    transacao
             `;
 
             db.query(queryRelatorio, (err, resultRelatorio) => {
@@ -140,15 +141,10 @@ app.post('/transacao', (req, res, next) => {
 });
 
 // Rota para editar uma transação existente
-app.put('/transacao/:id', (req, res, next) => {
-    const { id } = req.params;
-    const { tipo, valor, data, forma_pagamento, nome_do_item, barbeiro_id } = req.body;
-
-    // Validação básica dos dados de entrada
-    if (!tipo || !valor || !data || !forma_pagamento || !barbeiro_id) {
-        return res.status(400).json({ error: 'Todos os campos são obrigatórios.' });
-    }
-
+app.post('/update-transacao', (req, res, next) => {   
+    try {
+     
+    const { id, tipo, valor, data, forma_pagamento, nome_do_item, barbeiro_id } = req.body;
     const query = `
         UPDATE transacao
         SET tipo = ?, valor = ?, data = ?, forma_pagamento = ?, nome_do_item = ?, barbeiro_id = ?
@@ -166,19 +162,20 @@ app.put('/transacao/:id', (req, res, next) => {
            res.redirect('/');
         }
     );
+        
+} catch (error) {
+        console.error("teste", error);
+}
 });
 
 // Rota para deletar uma transação
-app.delete('/transacao/:id', (req, res, next) => {
-    const { id } = req.params;
+app.post('/delete-transacao', (req, res, next) => {
+    const { id } = req.body; // Use req.body ao invés de req.params
 
     const query = 'DELETE FROM transacao WHERE id = ?';
 
     db.query(query, [id], (err, result) => {
-        if (err) return next(err);
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'Transação não encontrada.' });
-        }
+        if (err) return next(err);        
         res.redirect('/');
     });
 });
@@ -194,7 +191,7 @@ app.get('/barbeiro-servicos/:id', (req, res, next) => {
             SUM(CASE WHEN tipo = 'entrada' AND servico = 'barba' THEN 1 ELSE 0 END) AS barbas,
             SUM(CASE WHEN tipo = 'entrada' AND servico = 'produto' THEN 1 ELSE 0 END) AS produtos,
             SUM(CASE WHEN tipo = 'entrada' AND servico = 'progressiva' THEN 1 ELSE 0 END) AS progressivas,
-            SUM(CASE WHEN tipo = 'entrada' AND servico = 'queratina' THEN 1 ELSE 0 END) AS queratina
+            SUM(CASE WHEN tipo = 'entrada' AND servico = 'saida' THEN 1 ELSE 0 END) AS saidas
         FROM
             transacao
         WHERE
@@ -242,28 +239,32 @@ app.post('/fechar-caixa', (req, res, next) => {
 });
 
 // Rota para relatório mensal de receita, rendimentos e despesas
-app.get('/relatorio-mensal', (req, res, next) => {
+app.get('/relatorio-mensal', (req, res) => {
     const { mes, ano } = req.query;
 
+    // Consulta SQL para somar as entradas e saídas do mês especificado
     const query = `
         SELECT
-            COALESCE(SUM(CASE WHEN tipo = 'entrada' THEN valor END), 0) AS total_entrada_mes,
-            COALESCE(SUM(CASE WHEN tipo = 'saida' THEN valor END), 0) AS total_saida_mes,
-            COALESCE(SUM(CASE WHEN tipo = 'entrada' THEN valor END) - SUM(CASE WHEN tipo = 'saida' THEN valor END), 0) AS saldo_mes
-        FROM
-            transacao
-        WHERE
-            MONTH(data) = ? AND YEAR(data) = ?
+            SUM(CASE WHEN tipo = 'entrada' THEN valor ELSE 0 END) AS total_entrada_mes,
+            SUM(CASE WHEN tipo = 'saida' THEN valor ELSE 0 END) AS total_saida_mes,
+            (SUM(CASE WHEN tipo = 'entrada' THEN valor ELSE 0 END) - SUM(CASE WHEN tipo = 'saida' THEN valor ELSE 0 END)) AS saldo_mes
+        FROM transacao
+        WHERE MONTH(data) = ? AND YEAR(data) = ?;
     `;
 
     db.query(query, [mes, ano], (err, result) => {
         if (err) return next(err);
-        res.json({
-            mes,
-            ano,
-            total_entrada_mes: result[0].total_entrada_mes,
-            total_saida_mes: result[0].total_saida_mes,
-            saldo_mes: result[0].saldo_mes
+
+        const total_entrada_mes = parseFloat(result[0].total_entrada_mes) || 0;
+        const total_saida_mes = parseFloat(result[0].total_saida_mes) || 0;
+        const saldo_mes = parseFloat(result[0].saldo_mes) || 0;
+
+        res.render('relatorio_mensal', {
+            mes: mes,
+            ano: ano,
+            total_entrada_mes: total_entrada_mes,
+            total_saida_mes: total_saida_mes,
+            saldo_mes: saldo_mes
         });
     });
 });
