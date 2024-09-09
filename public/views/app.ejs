@@ -329,24 +329,30 @@
                     <th>Total Saída do Mês</th>
                 </tr>
             </thead>
-            <tbody>
-                <% barbeiros.forEach(barbeiro => { %>
-                    <tr>
-                        <td><%= barbeiro.nome %></td>
-                       <td>R$ <%= barbeiro.total_entrada_servicos.toFixed(2) %></td>
-<td>R$ <%= barbeiro.comissao_produtos.toFixed(2) %></td>
-<td>R$ <%= barbeiro.total_rendimento.toFixed(2) %></td>
-<td>R$ <%= barbeiro.total_entrada.toFixed(2) %></td>
-<td>R$ <%= barbeiro.total_saida.toFixed(2) %></td>
-<td>R$ <%= barbeiro.saldo.toFixed(2) %></td>
-<td>R$ <%= barbeiro.total_entrada_dia.toFixed(2) %></td>
-<td>R$ <%= barbeiro.total_saida_dia.toFixed(2) %></td>
-<td>R$ <%= barbeiro.total_entrada_semana.toFixed(2) %></td>
-<td>R$ <%= barbeiro.total_saida_semana.toFixed(2) %></td>
-<td>R$ <%= barbeiro.total_entrada_mes.toFixed(2) %></td>
-<td>R$ <%= barbeiro.total_saida_mes.toFixed(2) %></td>
-                    </tr>
-                <% }) %>
+             <tbody>
+                <% 
+const formatNumber = (value) => {
+    return new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
+};
+
+barbeiros.forEach(barbeiro => { 
+%>
+    <tr>
+        <td><%= barbeiro.nome %></td>
+        <td>R$ <%= formatNumber(barbeiro.total_entrada_servicos || 0) %></td>
+        <td>R$ <%= formatNumber(barbeiro.comissao_produtos || 0) %></td>
+        <td>R$ <%= formatNumber(barbeiro.total_rendimento || 0) %></td>
+        <td>R$ <%= formatNumber(barbeiro.total_entrada || 0) %></td>
+        <td>R$ <%= formatNumber(barbeiro.total_saida || 0) %></td>
+        <td>R$ <%= formatNumber(barbeiro.saldo || 0) %></td>
+        <td>R$ <%= formatNumber(barbeiro.total_entrada_dia || 0) %></td>
+        <td>R$ <%= formatNumber(barbeiro.total_saida_dia || 0) %></td>
+        <td>R$ <%= formatNumber(barbeiro.total_entrada_semana || 0) %></td>
+        <td>R$ <%= formatNumber(barbeiro.total_saida_semana || 0) %></td>
+        <td>R$ <%= formatNumber(barbeiro.total_entrada_mes || 0) %></td>
+        <td>R$ <%= formatNumber(barbeiro.total_saida_mes || 0) %></td>
+    </tr>
+<% }) %>
             </tbody>
         </table>
 </div>
