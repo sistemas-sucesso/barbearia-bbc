@@ -74,6 +74,24 @@
     <div><p>Total de Entradas: R$ <%= total_entrada_mes.toFixed(2) %></p></div>
     <div> <p>Total de Saídas: R$ <%= total_saida_mes.toFixed(2) %></p></div>
     <div> <p>Saldo: R$ <%= saldo_mes.toFixed(2) %></p></div><br><br>
+
+    <h2>Serviços por Barbeiro</h2>
+<% servicosPorBarbeiro.forEach(barbeiro => { %>
+    <div>
+        <h3>Barbeiro ID: <%= barbeiro.barbeiro_id %></h3>
+        <p>Total de Serviços: <%= barbeiro.total_servicos %></p>
+        <p>Cortes: <%= barbeiro.cortes %></p>
+        <p>Barbas: <%= barbeiro.barbas %></p>
+        <p>Sobrancelha: <%= barbeiro.sobrancelha %></p>
+        <p>Hidratação: <%= barbeiro.hidratacao %></p>
+        <p>Selagem: <%= barbeiro.selagem %></p>
+        <p>Infantil: <%= barbeiro.infantil %></p>
+        <p>Tesousa: <%= barbeiro.tesousa %></p>
+        <p>Produtos: <%= barbeiro.produtos %></p>
+        <p>Saídas: R$ <%= barbeiro.saidas %></p>
+    </div>
+<% }); %>
+<hr><br><br>
     <a href="/">Voltar</a>
 </body>
 </html>
