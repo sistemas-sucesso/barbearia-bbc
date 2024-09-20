@@ -249,10 +249,23 @@
     border: 1px solid #ccc; /* opcional: adiciona uma borda ao redor da tabela */
     padding: 10px; /* opcional: adiciona espaçamento ao redor da tabela */
 }
+@media (max-width: 700px) {
+    .radio-group {
+        width: 100%; 
+        display: flex;
+        flex-wrap: wrap; /* Permite que os itens quebrem a linha quando não houver espaço suficiente */
+        justify-content: flex-start; /* Alinha os itens no início da linha */
+        gap: 10px; 
+    }
+    
+    .radio-group label {
+        display: block; /* Faz com que os labels apareçam em blocos individuais */
+        margin-right: 0; /* Remove o espaçamento à direita dos labels */
+    }
+}
     </style>
 </head>
 <body>
-<div class="salao"><a class="meta" href="/relatorio-mensal">Relatórios</a><a href="https://financeiro-app-eight.vercel.app/">Estética</a></div>
     <div class="container">
     <div class="container">
         <h1>Sistema de Salão</h1>
@@ -271,16 +284,34 @@
         
             <label for="servico">Serviço:</label>
             <div class="radio-group">
-                <input type="radio" id="corte" name="servico" value="corte" required>
-                <label for="corte">Corte</label>
+                <input type="radio" id="sobrancelha" name="servico" value="sobrancelha" required>
+                <label for="sobrancelha">Sobrancelha</label>
+            
                 <input type="radio" id="barba" name="servico" value="barba" required>
                 <label for="barba">Barba</label>
-                <input type="radio" id="progressiva" name="servico" value="progressiva" required>
-                <label for="progressiva">Progressiva</label>
+            
+                <input type="radio" id="corte" name="servico" value="corte" required>
+                <label for="corte">Corte</label>
+            
+                <input type="radio" id="infantil" name="servico" value="infantil" required>
+                <label for="navalhado_infantil">Infantil</label>
+            
+                <input type="radio" id="tesousa" name="servico" value="tesousa" required>
+                <label for="tesousa">Tesousa</label>
+            
+                <input type="radio" id="hidratacao" name="servico" value="hidratacao" required>
+                <label for="hidratacao">Hidratação</label>
+            
                 <input type="radio" id="produto" name="servico" value="produto" required>
                 <label for="produto">Produto</label>
-                <input type="radio" id="said" name="servico" value="saida" required>
-                <label for="alinhamento">Salário/Vale/Saída</label>
+
+                <input type="radio" id="selagem" name="servico" value="selagem" required>
+                <label for="selagem">Selagem</label>
+
+                <input type="radio" id="saida" name="servico" value="saida" required>
+                <label for="saida">Saída</label>           
+                
+    
             </div>
         
             <label for="valor">Valor:</label>
@@ -289,13 +320,14 @@
         
             <label for="forma_pagamento">Forma de Pagamento:</label>
             <div class="radio-group">
-                <input type="radio" id="pix" name="forma_pagamento" value="pix" required>
-                <label for="pix">Pix</label>
-                <input type="radio" id="cartao" name="forma_pagamento" value="cartao" required>
-                <label for="cartao">Cartão</label>
-                <input type="radio" id="dinheiro" name="forma_pagamento" value="dinheiro" required>
-                <label for="dinheiro">Dinheiro</label>
-            </div>
+    <input type="radio" id="pix" name="forma_pagamento" value="Pix" required>
+    <label for="pix">Pix</label>
+    <input type="radio" id="cartao" name="forma_pagamento" value="Cartao" required>
+    <label for="cartao">Cartão</label>
+    <input type="radio" id="dinheiro" name="forma_pagamento" value="Dinheiro" required>
+    <label for="dinheiro">Dinheiro</label>
+</div>
+
         
             <label for="barbeiro_id">Barbeiro:</label>
             <div class="radio-group">
@@ -306,8 +338,10 @@
             </div>        
             <button type="submit">Adicionar</button>
         </form>
-        <button id="toggleTableBtn1">Ver relatório</button>   
-        
+        <button  onclick="togglePage()">Mostrar/Esconder</button>
+        <div id="pag" style="display: none;">       
+         <button id="toggleTableBtn1">Ver relatório</button>   
+         <div class="salao"><a class="meta" href="/relatorio-mensal">Relatórios</a></div>
 
         <h2>Barbeiros</h2>
 <div class="table-wrapper">
@@ -450,40 +484,42 @@ barbeiros.forEach(barbeiro => {
 <h2>Fechamento de Caixa</h2>
         <form action="/fechar-caixa" method="POST">
             <button type="submit">Fechar Caixa</button>
-        </form>
+        </form> 
+    </div>
     <div class="containers">
         <h1>Relatório de Barbeiros</h1>
 
         <div class="tabs">
             <ul>
-                <li><a href="#tab-joao">Júnior</a></li>
-                <li><a href="#tab-marcos">Kiko</a></li>
-                <li><a href="#tab-henrique">Deivid</a></li>
+                <li><a href="#tab-joao" onclick="verificarSenha('joao')">Júnior</a></li>
+                <li><a href="#tab-marcos" onclick="verificarSenha('marcos')">Kiko</a></li>
+                <li><a href="#tab-henrique" onclick="verificarSenha('henrique')">Deivid</a></li>
             </ul>
 
-            <div id="tab-joao" class="tab-content">
-                <h2>Serviços Realizados por Júnior</h2>
-                <div id="servicos-joao"></div>
+           
+    <div id="tab-joao" class="tab-content" style="display: none;">
+        <h2>Serviços Realizados por Júnior</h2>
+        <div id="servicos-joao"></div>
 
-                <h2>Relatório de Rendimentos</h2>
-                <div id="relatorio-joao"></div>
-            </div>
+        <h2>Relatório de Rendimentos</h2>
+        <div id="relatorio-joao"></div>
+    </div>
 
-            <div id="tab-marcos" class="tab-content">
-                <h2>Serviços Realizados por Kiko</h2>
-                <div id="servicos-marcos"></div>
+    <div id="tab-marcos" class="tab-content" style="display: none;">
+        <h2>Serviços Realizados por Kiko</h2>
+        <div id="servicos-marcos"></div>
 
-                <h2>Relatório de Rendimentos</h2>
-                <div id="relatorio-marcos"></div>
-            </div>
+        <h2>Relatório de Rendimentos</h2>
+        <div id="relatorio-marcos"></div>
+    </div>
 
-            <div id="tab-henrique" class="tab-content">
-                <h2>Serviços Realizados por Deivid</h2>
-                <div id="servicos-henrique"></div>
+    <div id="tab-henrique" class="tab-content" style="display: none;">
+        <h2>Serviços Realizados por Deivid</h2>
+        <div id="servicos-henrique"></div>
 
-                <h2>Relatório de Rendimentos</h2>
-                <div id="relatorio-henrique"></div>
-            </div>
+        <h2>Relatório de Rendimentos</h2>
+        <div id="relatorio-henrique"></div>
+    </div>
         </div>
 
     </div>
@@ -492,19 +528,34 @@ barbeiros.forEach(barbeiro => {
             const form = document.getElementById('transaction-form');
             form.style.display = form.style.display === 'none' ? 'block' : 'none';
         }
-
+        /*function formatDateToISO(dateStr) {
+            if (!dateStr) {
+                console.error('Data fornecida é inválida:', dateStr);
+                return ''; // Retorna uma string vazia ou um valor padrão
+            }
+        
+            const [day, month, year] = dateStr.split('/').map(Number);
+        
+            // Verificar se o ano, mês e dia são números válidos
+            if (isNaN(day) || isNaN(month) || isNaN(year)) {
+                console.error('Data fornecida não é válida:', dateStr);
+                return ''; // Retorna uma string vazia ou um valor padrão
+            }
+        
+            return `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+        }*/
         function editTransaction(id, nome_do_item, tipo, valor, data, forma_pagamento, barbeiro_id) {
             console.log("Valores recebidos:", { id, nome_do_item, tipo, valor, data, forma_pagamento, barbeiro_id });
             alert("barbeiro_id:", barbeiro_id);
             console.log("barbeiro_id:", barbeiro_id);
             const form = document.getElementById('edit-transaction-form');
             form.style.display = 'block';
-
+            const formattedDate = data.split('/').reverse().join('-');
             document.getElementById('edit-id').value = id;
             document.getElementById('edit-nome_do_item-modal').value = nome_do_item;
             document.getElementById('edit-tipo').value = tipo;
             document.getElementById('edit-valor').value = valor;
-            document.getElementById('edit-data').value = data;
+            document.getElementById('edit-data').value = formattedDate;
             const formaPagamentoElement = document.getElementById('edit-forma_pagamento');
     if (formaPagamentoElement) {
         formaPagamentoElement.value = forma_pagamento;
@@ -548,10 +599,58 @@ barbeiros.forEach(barbeiro => {
    
     ///////////
     document.addEventListener('DOMContentLoaded', function() {
+        const senhas = {
+            joao: '123', 
+            marcos: '456',  
+            henrique: '789'  
+        };
+        const tabs = {
+            joao: document.getElementById('tab-joao'),
+            marcos: document.getElementById('tab-marcos'),
+            henrique: document.getElementById('tab-henrique')
+        };
         const servicosJoao = document.getElementById('servicos-joao');
         const servicosMarcos = document.getElementById('servicos-marcos');
         const servicosHenrique = document.getElementById('servicos-henrique');
+        const tabsAbertas = {
+            joao: false,
+            marcos: false,
+            henrique: false
+        };
     
+        window.verificarSenha = function(barbeiro) {
+            if (!tabsAbertas[barbeiro]) {
+                const senha = prompt('Digite a senha para acessar os serviços de ' + barbeiro.charAt(0).toUpperCase() + barbeiro.slice(1));
+    
+                if (senha === senhas[barbeiro]) {
+                    tabsAbertas[barbeiro] = true; // Marca a aba como aberta
+                    mostrarOuEsconderTab(barbeiro);
+                } else {
+                    alert('Senha incorreta! Acesso negado.');
+                }
+            } else {
+                mostrarOuEsconderTab(barbeiro); // Alterna a visibilidade da aba sem pedir a senha
+            }
+        };
+    
+        function mostrarOuEsconderTab(barbeiro) {
+            // Esconde todas as abas
+            for (let key in tabs) {
+                tabs[key].style.display = 'none';
+                tabsAbertas[key] = false; // Marca todas as abas como fechadas
+            }
+    
+            // Se a aba correspondente já estiver aberta, atualiza a página e esconde a aba
+            if (tabs[barbeiro].style.display === 'block') {
+                tabs[barbeiro].style.display = 'none'; // Esconde a aba
+                location.reload(); // Atualiza a página
+            } else {
+                // Mostra a aba correspondente
+                tabs[barbeiro].style.display = 'block'; // Mostra a aba
+                tabsAbertas[barbeiro] = true; // Marca a aba como aberta
+            }
+        }
+        
         const relatorioJoao = document.getElementById('relatorio-joao');
         const relatorioMarcos = document.getElementById('relatorio-marcos');
         const relatorioHenrique = document.getElementById('relatorio-henrique');
@@ -566,7 +665,11 @@ barbeiros.forEach(barbeiro => {
                         <p>Total de Serviços: ${data.total_servicos}</p>
                         <p>Cortes: ${data.cortes}</p>
                         <p>Barbas: ${data.barbas}</p>
-                        <p>Progressiva: ${data.progressivas}</p>
+                        <p>Sobrancelha: ${data.sobrancelha}</p>
+                        <p>Hidratacao: ${data.hidratacao}</p>
+                        <p>Selagem: ${data.selagem}</p>
+                        <p>Infantil: ${data.infantil}</p>
+                        <p>Tesousa: ${data.tesousa}</p>
                         <p>Produtos: ${data.produtos}</p>                       
                         <p>Salário/vale: ${data.saidas}</p>`                        
                     ;
@@ -666,6 +769,23 @@ barbeiros.forEach(barbeiro => {
             });
         });
     });
+    function togglePage() {
+        const senhaCorreta = '123'; // Defina a senha desejada
+        const senha = prompt('Digite a senha para continuar:');
+    
+        if (senha === senhaCorreta) {
+            const elemento = document.getElementById('pag');
+            
+            // Alterna entre mostrar ou esconder o conteúdo
+            if (elemento.style.display === 'none') {
+                elemento.style.display = 'block'; // Mostra o conteúdo
+            } else {
+                elemento.style.display = 'none'; // Esconde o conteúdo
+            }
+        } else {
+            alert('Senha incorreta! Acesso negado.');
+        }
+    }
     </script>
 </body>
 </html>
