@@ -663,6 +663,7 @@ barbeiros.forEach(barbeiro => {
                 .then(data => {
                     console.log("Resultado", data);                    
                     element.innerHTML = `
+               <button onclick="fecharAbas()">Fechar</button>
                         <p>Total de Serviços: ${data.total_servicos}</p>
                         <p>Cortes: ${data.cortes}</p>
                         <p>Barbas: ${data.barbas}</p>
