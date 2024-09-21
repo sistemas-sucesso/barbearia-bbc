@@ -496,6 +496,7 @@ barbeiros.forEach(barbeiro => {
                 <li><a href="#tab-henrique" onclick="verificarSenha('henrique')">Deivid</a></li>
             </ul>
 
+    <button onclick="fecharAbas()">Fechar Abas</button>
            
     <div id="tab-joao" class="tab-content" style="display: none;">
         <h2>Serviços Realizados por Júnior</h2>
@@ -785,6 +786,16 @@ barbeiros.forEach(barbeiro => {
         } else {
             alert('Senha incorreta! Acesso negado.');
         }
+    }
+<script>
+    function fecharAbas() {
+        // Seleciona todas as abas abertas
+        const abas = document.querySelectorAll('.tab-content');
+
+        // Itera sobre todas as abas e fecha (oculta) as que estão abertas
+        abas.forEach(aba => {
+            aba.style.display = 'none';
+        });
     }
     </script>
 </body>
