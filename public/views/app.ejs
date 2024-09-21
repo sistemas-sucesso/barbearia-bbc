@@ -206,7 +206,11 @@
         }
         
         .radio-group {
-            
+            display: flex;
+            align-items: center; /* Alinha verticalmente os itens ao centro */
+            gap: 10px;
+            width: 20%; /* Espaçamento horizontal entre os itens */
+            margin-bottom: 30px;
         }
         
         .radio-group label {
@@ -246,7 +250,13 @@
     padding: 10px; /* opcional: adiciona espaçamento ao redor da tabela */
 }
 @media (max-width: 700px) {
-    
+    .radio-group {
+        width: 100%; 
+        display: flex;
+        flex-wrap: wrap; /* Permite que os itens quebrem a linha quando não houver espaço suficiente */
+        justify-content: flex-start; /* Alinha os itens no início da linha */
+        gap: 10px; 
+    }
     
     .radio-group label {
         display: block; /* Faz com que os labels apareçam em blocos individuais */
