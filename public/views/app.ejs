@@ -242,6 +242,10 @@
         .desc{
             width: 130px;
         }
+.servicos {
+    flex-wrap: wrap;
+    width: 100%; /* Ajuste conforme necessário */
+}
 .table-wrapper {
     max-width: 100%;
     overflow-x: auto;
@@ -281,7 +285,7 @@
                 <input type="radio" id="saida" name="tipo" value="saida" required>
                 <label for="saida">Saída</label>
             </div>
-        
+        <div class="radio-group servicos">
             <label for="servico">Serviço:</label>
             <div class="radio-group">
                 <input type="radio" id="sobrancelha" name="servico" value="sobrancelha" required>
@@ -335,6 +339,7 @@
                     <input type="radio" id="barbeiro_<%= barbeiro.id %>" name="barbeiro_id" value="<%= barbeiro.id %>" required>
                     <label for="barbeiro_<%= barbeiro.id %>"><%= barbeiro.nome %></label>
                 <% }) %>
+</div>
             </div>        
             <button type="submit">Adicionar</button>
         </form>
