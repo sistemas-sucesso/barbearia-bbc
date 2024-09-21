@@ -268,13 +268,31 @@ app.get('/relatorio-mensal', (req, res) => {
         GROUP BY barbeiro_id;
     `;
 
+    const queryTotalServicos = `
+        SELECT 
+            COUNT(*) AS total_servicos,
+            SUM(CASE WHEN tipo = 'entrada' AND servico = 'corte' THEN 1 ELSE 0 END) AS cortes,
+            SUM(CASE WHEN tipo = 'entrada' AND servico = 'barba' THEN 1 ELSE 0 END) AS barbas,
+            SUM(CASE WHEN tipo = 'entrada' AND servico = 'sobrancelha' THEN 1 ELSE 0 END) AS sobrancelha,
+            SUM(CASE WHEN tipo = 'entrada' AND servico = 'hidratacao' THEN 1 ELSE 0 END) AS hidratacao,
+            SUM(CASE WHEN tipo = 'entrada' AND servico = 'selagem' THEN 1 ELSE 0 END) AS selagem,
+            SUM(CASE WHEN tipo = 'entrada' AND servico = 'infantil' THEN 1 ELSE 0 END) AS infantil,
+            SUM(CASE WHEN tipo = 'entrada' AND servico = 'tesousa' THEN 1 ELSE 0 END) AS tesousa,
+            SUM(CASE WHEN tipo = 'entrada' AND servico = 'produto' THEN 1 ELSE 0 END) AS produtos,
+            SUM(CASE WHEN tipo = 'saida' THEN valor ELSE 0 END) AS saidas
+        FROM transacao
+        WHERE EXTRACT(MONTH FROM data) = $1 AND EXTRACT(YEAR FROM data) = $2;
+    `;
+
     Promise.all([
         client.query(queryTransacoes, [mes, ano]),
-        client.query(queryServicos, [mes, ano])
+        client.query(queryServicos, [mes, ano]),
+        client.query(queryTotalServicos, [mes, ano]) // Nova consulta para totais globais
     ])
     .then(results => {
         const totalTransacoes = results[0].rows[0];
         const servicosPorBarbeiro = results[1].rows;
+        const totalServicos = results[2].rows[0]; // Resultado da consulta de totais globais
 
         res.render('relatorio_mensal', {
             mes,
@@ -282,14 +300,16 @@ app.get('/relatorio-mensal', (req, res) => {
             total_entrada_mes: parseFloat(totalTransacoes.total_entrada_mes) || 0,
             total_saida_mes: parseFloat(totalTransacoes.total_saida_mes) || 0,
             saldo_mes: parseFloat(totalTransacoes.saldo_mes) || 0,
-            servicosPorBarbeiro // Passando os serviços por barbeiro
+            servicosPorBarbeiro, // Serviços por barbeiro
+            totalServicos // Totais globais de serviços
         });
     })
-    .catch(err => {
-        console.error('Erro ao carregar dados:', err);
-        res.status(500).send('Erro ao carregar relatório');
+    .catch(error => {
+        console.error('Erro ao gerar o relatório:', error);
+        res.status(500).send('Erro ao gerar o relatório');
     });
 });
+
 
 app.post('/delete-transacao', async (req, res, next) => {
     const { id } = req.body; 
