@@ -4,9 +4,9 @@ const pg = require('pg');
 const cors = require('cors');
 require('dotenv').config(); 
 
+
 const app = express();
 
-// Configurações do Express
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'public/views'));
 
@@ -15,7 +15,8 @@ app.use(express.json());
 app.use(cors());
 const config = {
     host: process.env.DB_HOST,
-    user: pr
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
     port: process.env.DB_PORT || 5432,
     ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false
@@ -36,6 +37,8 @@ function errorHandler(err, req, res, next) {
     res.status(500).json({ error: 'Ocorreu um erro devido a instabilidade no servidor tente novamente mais tarde, isso pode ser rápido de 5 à 20 minutos devido a grande demanda do servidor, obrigado por compreender.' });
 }
 
+
+  
 // Rota principal - Obtém dados de barbeiros, transações e relatório geral
 app.get('/', async (req, res, next) => {
     try {
@@ -75,10 +78,10 @@ app.get('/', async (req, res, next) => {
                 t.tipo,
                 t.forma_pagamento,
                 t.valor,
-                t.servico,
+                t.servico,                
                 t.nome_do_item,
                 t.data,
-                t.barbeiro_id,
+                t.barbeiro_id,                
                 b.nome AS barbeiro,
                 t.fechado
             FROM
@@ -196,6 +199,8 @@ app.get('/barbeiro-servicos/:id', (req, res, next) => {
     SUM(CASE WHEN tipo = 'entrada' AND servico = 'selagem' AND fechado = FALSE THEN 1 ELSE 0 END) AS selagem,
     SUM(CASE WHEN tipo = 'entrada' AND servico = 'infantil' AND fechado = FALSE THEN 1 ELSE 0 END) AS infantil,
     SUM(CASE WHEN tipo = 'entrada' AND servico = 'tesousa' AND fechado = FALSE THEN 1 ELSE 0 END) AS tesousa,
+    SUM(CASE WHEN tipo = 'entrada' AND servico = 'combo' AND fechado = FALSE THEN 1 ELSE 0 END) AS combo,
+    SUM(CASE WHEN tipo = 'saida' AND servico = 'vale' AND fechado = FALSE THEN 1 ELSE 0 END) AS vale,
     SUM(CASE WHEN tipo = 'entrada' AND servico = 'produto' AND fechado = FALSE THEN 1 ELSE 0 END) AS produtos,
     SUM(CASE WHEN tipo = 'saida' AND fechado = FALSE THEN valor ELSE 0 END) AS saidas
     FROM
@@ -217,18 +222,20 @@ app.get('/barbeiro-relatorio/:id', (req, res, next) => {
     const { id } = req.params;
 
     const query = `
-       SELECT 
-            COALESCE(SUM(CASE WHEN tipo = 'entrada' AND servico != 'produto' AND fechado = FALSE THEN valor * 0.37 END), 0) AS rendimento_servicos,
-            COALESCE(SUM(CASE WHEN tipo = 'entrada' AND servico = 'produto' AND fechado = FALSE THEN valor * 0.10 END), 0) AS comissao_produtos,
-            COALESCE(SUM(CASE WHEN tipo = 'entrada' AND servico != 'produto' AND fechado = FALSE THEN valor * 0.37 END) +
-                     SUM(CASE WHEN tipo = 'entrada' AND servico = 'produto' AND fechado = FALSE THEN valor * 0.10 END), 0) AS total_rendimento,
-            COALESCE(SUM(CASE WHEN tipo = 'saida' AND fechado = FALSE THEN valor END), 0) AS total_saida,
-            COALESCE(SUM(CASE WHEN tipo = 'entrada' AND fechado = FALSE THEN valor * 0.37 END) - 
-                     SUM(CASE WHEN tipo = 'saida' AND fechado = FALSE THEN valor END), 0) AS saldo
-        FROM
-            transacao
-        WHERE
-            barbeiro_id = $1
+        SELECT 
+    COALESCE(SUM(CASE WHEN tipo = 'entrada' AND servico != 'produto' AND servico != 'vale' AND fechado = FALSE THEN valor * 0.37 END), 0) AS rendimento_servicos,
+    COALESCE(SUM(CASE WHEN tipo = 'entrada' AND servico = 'produto' AND fechado = FALSE THEN valor * 0.10 END), 0) AS comissao_produtos,
+    COALESCE(SUM(CASE WHEN tipo = 'entrada' AND servico != 'produto' AND servico != 'vale' AND fechado = FALSE THEN valor * 0.37 END) +
+             SUM(CASE WHEN tipo = 'entrada' AND servico = 'produto' AND fechado = FALSE THEN valor * 0.10 END), 0) - 
+             COALESCE(SUM(CASE WHEN tipo = 'saida' AND servico = 'vale' AND fechado = FALSE THEN valor END), 0) AS total_rendimento,
+    COALESCE(SUM(CASE WHEN tipo = 'saida' AND fechado = FALSE THEN valor END), 0) AS total_saida,
+    COALESCE(SUM(CASE WHEN tipo = 'entrada' AND servico != 'vale' AND fechado = FALSE THEN valor * 0.37 END) - 
+             SUM(CASE WHEN tipo = 'saida' AND fechado = FALSE THEN valor END), 0) AS saldo
+FROM
+    transacao
+WHERE
+    barbeiro_id = $1;
+
     `;
 
     client.query(query, [id], (err, result) => {
@@ -260,6 +267,8 @@ app.get('/relatorio-mensal', (req, res) => {
             SUM(CASE WHEN tipo = 'entrada' AND servico = 'selagem' THEN 1 ELSE 0 END) AS selagem,
             SUM(CASE WHEN tipo = 'entrada' AND servico = 'infantil' THEN 1 ELSE 0 END) AS infantil,
             SUM(CASE WHEN tipo = 'entrada' AND servico = 'tesousa' THEN 1 ELSE 0 END) AS tesousa,
+            SUM(CASE WHEN tipo = 'entrada' AND servico = 'combo' THEN 1 ELSE 0 END) AS combo,
+            SUM(CASE WHEN tipo = 'entrada' AND servico = 'vale' THEN 1 ELSE 0 END) AS vale,
             SUM(CASE WHEN tipo = 'entrada' AND servico = 'produto' THEN 1 ELSE 0 END) AS produtos,
             SUM(CASE WHEN tipo = 'saida' THEN valor ELSE 0 END) AS saidas
         FROM transacao
@@ -267,31 +276,13 @@ app.get('/relatorio-mensal', (req, res) => {
         GROUP BY barbeiro_id;
     `;
 
-    const queryTotalServicos = `
-        SELECT 
-            COUNT(*) AS total_servicos,
-            SUM(CASE WHEN tipo = 'entrada' AND servico = 'corte' THEN 1 ELSE 0 END) AS cortes,
-            SUM(CASE WHEN tipo = 'entrada' AND servico = 'barba' THEN 1 ELSE 0 END) AS barbas,
-            SUM(CASE WHEN tipo = 'entrada' AND servico = 'sobrancelha' THEN 1 ELSE 0 END) AS sobrancelha,
-            SUM(CASE WHEN tipo = 'entrada' AND servico = 'hidratacao' THEN 1 ELSE 0 END) AS hidratacao,
-            SUM(CASE WHEN tipo = 'entrada' AND servico = 'selagem' THEN 1 ELSE 0 END) AS selagem,
-            SUM(CASE WHEN tipo = 'entrada' AND servico = 'infantil' THEN 1 ELSE 0 END) AS infantil,
-            SUM(CASE WHEN tipo = 'entrada' AND servico = 'tesousa' THEN 1 ELSE 0 END) AS tesousa,
-            SUM(CASE WHEN tipo = 'entrada' AND servico = 'produto' THEN 1 ELSE 0 END) AS produtos,
-            SUM(CASE WHEN tipo = 'saida' THEN valor ELSE 0 END) AS saidas
-        FROM transacao
-        WHERE EXTRACT(MONTH FROM data) = $1 AND EXTRACT(YEAR FROM data) = $2;
-    `;
-
     Promise.all([
         client.query(queryTransacoes, [mes, ano]),
-        client.query(queryServicos, [mes, ano]),
-        client.query(queryTotalServicos, [mes, ano]) // Nova consulta para totais globais
+        client.query(queryServicos, [mes, ano])
     ])
     .then(results => {
         const totalTransacoes = results[0].rows[0];
         const servicosPorBarbeiro = results[1].rows;
-        const totalServicos = results[2].rows[0]; // Resultado da consulta de totais globais
 
         res.render('relatorio_mensal', {
             mes,
@@ -299,16 +290,14 @@ app.get('/relatorio-mensal', (req, res) => {
             total_entrada_mes: parseFloat(totalTransacoes.total_entrada_mes) || 0,
             total_saida_mes: parseFloat(totalTransacoes.total_saida_mes) || 0,
             saldo_mes: parseFloat(totalTransacoes.saldo_mes) || 0,
-            servicosPorBarbeiro, // Serviços por barbeiro
-            totalServicos // Totais globais de serviços
+            servicosPorBarbeiro // Passando os serviços por barbeiro
         });
     })
-    .catch(error => {
-        console.error('Erro ao gerar o relatório:', error);
-        res.status(500).send('Erro ao gerar o relatório');
+    .catch(err => {
+        console.error('Erro ao carregar dados:', err);
+        res.status(500).send('Erro ao carregar relatório');
     });
 });
-
 
 app.post('/delete-transacao', async (req, res, next) => {
     const { id } = req.body; 
