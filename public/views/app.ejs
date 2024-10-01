@@ -273,7 +273,7 @@
     <div class="container">
     <div class="container">
         <h1>Sistema de Salão</h1>
-        <button class="show-hide-btn" onclick="toggleForm()">Adicionar Transação</button>
+        <button class="show-hide-btn" onclick="toggleFormOne()">Adicionar Transação</button>
         <form id="transaction-form" action="/transacao" method="post" style="display:none;">
             <h2>Adicionar Nova Transação</h2>
             <label for="edit-nome_do_item">Descrição:</label>
@@ -288,6 +288,9 @@
        
             <label for="servico">Serviço:</label>
             <div class="radio-group">
+                <input type="radio" id="combo" name="servico" value="combo" required>
+                <label for="sobrancelha">Combo</label>
+
                 <input type="radio" id="sobrancelha" name="servico" value="sobrancelha" required>
                 <label for="sobrancelha">Sobrancelha</label>
             
@@ -313,7 +316,10 @@
                 <label for="selagem">Selagem</label>
 
                 <input type="radio" id="saida" name="servico" value="saida" required>
-                <label for="saida">Sal/val/saída</label>           
+                <label for="saida">Sal/val/saída</label>  
+
+                <input type="radio" id="vale" name="servico" value="vale" required>
+                <label for="saida">Vale</label>           
                 </div>
     
     
@@ -344,7 +350,11 @@
             <button type="submit">Adicionar</button>
         </form>
         <button  onclick="togglePage()">Mostrar/Esconder</button>
-        <div id="pag" style="display: none;">       
+        <div id="pag" style="display: none;">  
+            
+            
+
+            
          <button id="toggleTableBtn1">Ver relatório</button>   
          <div class="salao"><a class="meta" href="/relatorio-mensal">Relatórios</a></div>
 
@@ -493,46 +503,290 @@ barbeiros.forEach(barbeiro => {
     </div>
     <div class="containers">
         <h1>Relatório de Barbeiros</h1>
-
+    
         <div class="tabs">
             <ul>
-                <li><a href="#tab-joao" onclick="verificarSenha('joao')">Júnior</a></li>
-                <li><a href="#tab-marcos" onclick="verificarSenha('marcos')">Kiko</a></li>
-                <li><a href="#tab-henrique" onclick="verificarSenha('henrique')">Deivid</a></li>
+                <li><a href="#tab-joao" onclick="verificarSenha('joao', 1)">Júnior</a></li>
+                <li><a href="#tab-marcos" onclick="verificarSenha('marcos', 2)">Kiko</a></li>
+                <li><a href="#tab-henrique" onclick="verificarSenha('henrique', 3)">Deivid</a></li>
             </ul>
+    
+            <!-- Aba do Júnior -->
+            <div id="tab-joao" class="tab-content" style="display: none;">
+                <h2>Serviços Realizados por Júnior</h2>
+                <div id="servicos-joao"></div>
+    
+                <h2>Relatório de Rendimentos</h2>
+                <div id="relatorio-joao"></div>
+    
+                <!-- Toggle button that controls form display -->
+                <button class="show-hide-btn" onclick="toggleForm('transaction-form-joao')">Adicionar Transação</button>
+    
+                <!-- Form for adding a new transaction for Júnior -->
+                <form id="transaction-form-joao" action="/transacao" method="post" style="display:none;">
+                    <h2>Adicionar Nova Transação</h2>
+                    <label for="edit-nome_do_item">Descrição:</label>
+                    <input style="width: 180px;" type="text" id="edit-nome_do_item" name="nome_do_item" required>
+    
+                    <label for="tipo">Tipo:</label>
+                    <div class="radio-group">
+                        <input type="radio" id="entrada-joao" name="tipo" value="entrada" required>
+                        <label for="entrada-joao">Entrada</label>
+                        <input type="radio" id="saida-joao" name="tipo" value="saida" required>
+                        <label for="saida-joao">Saída</label>
+                    </div>
+    
+                    <!-- Services radio buttons -->
+                    <label for="servico">Serviço:</label>
+            <div class="radio-group">
+                <input type="radio" id="combo" name="servico" value="combo" required>
+                <label for="sobrancelha">Combo</label>
 
-               
-    <div id="tab-joao" class="tab-content" style="display: none;">
-        <h2>Serviços Realizados por Júnior</h2>
-        <div id="servicos-joao"></div>
+                <input type="radio" id="sobrancelha" name="servico" value="sobrancelha" required>
+                <label for="sobrancelha">Sobrancelha</label>
+            
+                <input type="radio" id="barba" name="servico" value="barba" required>
+                <label for="barba">Barba</label>
+            
+                <input type="radio" id="corte" name="servico" value="corte" required>
+                <label for="corte">Corte</label>
+            
+                <input type="radio" id="infantil" name="servico" value="infantil" required>
+                <label for="navalhado_infantil">Infantil</label><br><br>
+            
+                <input type="radio" id="tesousa" name="servico" value="tesousa" required>
+                <label for="tesousa">Tesousa</label>
+            
+                <input type="radio" id="hidratacao" name="servico" value="hidratacao" required>
+                <label for="hidratacao">Hidratação</label>
+            
+                <input type="radio" id="produto" name="servico" value="produto" required>
+                <label for="produto">Produto</label>
 
-        <h2>Relatório de Rendimentos</h2>
-        <div id="relatorio-joao"></div>
-    </div>
+                <input type="radio" id="selagem" name="servico" value="selagem" required>
+                <label for="selagem">Selagem</label>
 
-    <div id="tab-marcos" class="tab-content" style="display: none;">
-        <h2>Serviços Realizados por Kiko</h2>
-        <div id="servicos-marcos"></div>
+                <input type="radio" id="vale" name="servico" value="vale" required>
+                <label for="saida">vale</label>           
+                </div>
+    
+    
+                    <label for="valor">Valor:</label>
+                    <input style="width: 120px;" type="number" id="valor-joao" name="valor" step="0.01" required>
+    
+                    <label for="forma_pagamento">Forma de Pagamento:</label>
+                    <div class="radio-group">
+                        <input type="radio" id="pix-joao" name="forma_pagamento" value="Pix" required>
+                        <label for="pix-joao">Pix</label>
+                        <input type="radio" id="cartao-joao" name="forma_pagamento" value="Cartao" required>
+                        <label for="cartao-joao">Cartão</label>
+                        <input type="radio" id="dinheiro-joao" name="forma_pagamento" value="Dinheiro" required>
+                        <label for="dinheiro-joao">Dinheiro</label>
+                    </div>
+    
+                    <!-- Selection for barber, already filled in with Júnior -->
+                    <label for="edit-barbeiro_id">Barbeiro:</label>
+                    <select id="edit-barbeiro_id" name="barbeiro_id" required disabled>
+                        <% barbeiros.forEach(barbeiro => { %>
+                            <option value="<%= barbeiro.id %>" <%= barbeiro.id === 1 ? 'selected' : '' %>>
+                                <%= barbeiro.nome %>
+                            </option>
+                        <% }) %>
+                    </select>
+                    <input type="hidden" name="barbeiro_id" value="1">
+                    <button type="submit">Adicionar</button>
+                </form>
+            </div>
+        
+    
+    
 
-        <h2>Relatório de Rendimentos</h2>
-        <div id="relatorio-marcos"></div>
-    </div>
+    
+            <!-- Aba do Kiko -->
+            <div id="tab-marcos" class="tab-content" style="display: none;">
+                <h2>Serviços Realizados por Kiko</h2>
+                <div id="servicos-marcos"></div>
+    
+                <h2>Relatório de Rendimentos</h2>
+                <div id="relatorio-marcos"></div>
+    
+                <!-- Formulário de transação para Kiko -->
+                <button class="show-hide-btn" onclick="toggleForm('transaction-form-marcos')">Adicionar Transação</button>
+    
+                <!-- Form for adding a new transaction for Júnior -->
+                <form id="transaction-form-marcos" action="/transacao" method="post" style="display:none;">
+                    <h2>Adicionar Nova Transação</h2>
+                    <label for="edit-nome_do_item-marcos">Descrição:</label>
+                    <input style="width: 180px;" type="text" id="edit-nome_do_item-marcos" name="nome_do_item" required>
+    
+                    <label for="tipo">Tipo:</label>
+                    <div class="radio-group">
+                        <input type="radio" id="entrada-joao" name="tipo" value="entrada" required>
+                        <label for="entrada-joao">Entrada</label>
+                        <input type="radio" id="saida-joao" name="tipo" value="saida" required>
+                        <label for="saida-joao">Saída</label>
+                    </div>
+    
+                    <!-- Services radio buttons -->
+                    <label for="servico">Serviço:</label>
+            <div class="radio-group">
+                <input type="radio" id="combo" name="servico" value="combo" required>
+                <label for="sobrancelha">Combo</label>
 
-    <div id="tab-henrique" class="tab-content" style="display: none;">
-        <h2>Serviços Realizados por Deivid</h2>
-        <div id="servicos-henrique"></div>
+                <input type="radio" id="sobrancelha" name="servico" value="sobrancelha" required>
+                <label for="sobrancelha">Sobrancelha</label>
+            
+                <input type="radio" id="barba" name="servico" value="barba" required>
+                <label for="barba">Barba</label>
+            
+                <input type="radio" id="corte" name="servico" value="corte" required>
+                <label for="corte">Corte</label>
+            
+                <input type="radio" id="infantil" name="servico" value="infantil" required>
+                <label for="navalhado_infantil">Infantil</label><br><br>
+            
+                <input type="radio" id="tesousa" name="servico" value="tesousa" required>
+                <label for="tesousa">Tesousa</label>
+            
+                <input type="radio" id="hidratacao" name="servico" value="hidratacao" required>
+                <label for="hidratacao">Hidratação</label>
+            
+                <input type="radio" id="produto" name="servico" value="produto" required>
+                <label for="produto">Produto</label>
 
-        <h2>Relatório de Rendimentos</h2>
-        <div id="relatorio-henrique"></div>
-    </div>
+                <input type="radio" id="selagem" name="servico" value="selagem" required>
+                <label for="selagem">Selagem</label>
+
+                <input type="radio" id="vale" name="servico" value="vale" required>
+                <label for="saida">Vale</label>           
+                </div>
+    
+    
+                    <label for="valor">Valor:</label>
+                    <input style="width: 120px;" type="number" id="valor-joao" name="valor" step="0.01" required>
+    
+                    <label for="forma_pagamento">Forma de Pagamento:</label>
+                    <div class="radio-group">
+                        <input type="radio" id="pix-joao" name="forma_pagamento" value="Pix" required>
+                        <label for="pix-joao">Pix</label>
+                        <input type="radio" id="cartao-joao" name="forma_pagamento" value="Cartao" required>
+                        <label for="cartao-joao">Cartão</label>
+                        <input type="radio" id="dinheiro-joao" name="forma_pagamento" value="Dinheiro" required>
+                        <label for="dinheiro-joao">Dinheiro</label>
+                    </div>
+    
+                    <!-- Selection for barber, already filled in with Júnior -->
+                    <label for="edit-barbeiro_id">Barbeiro:</label>
+                    <select id="edit-barbeiro_id" name="barbeiro_id" required disabled>
+                        <% barbeiros.forEach(barbeiro => { %>
+                            <option value="<%= barbeiro.id %>" <%= barbeiro.id === 2 ? 'selected' : '' %>>
+                                <%= barbeiro.nome %>
+                            </option>
+                        <% }) %>
+                    </select>
+                    <input type="hidden" name="barbeiro_id" value="2">
+                    <button type="submit">Adicionar</button>
+                </form>
+            </div>
+    
+            <!-- Aba do Deivid -->
+            <div id="tab-henrique" class="tab-content" style="display: none;">
+                <h2>Serviços Realizados por Deivid</h2>
+                <div id="servicos-henrique"></div>
+    
+                <h2>Relatório de Rendimentos</h2>
+                <div id="relatorio-henrique"></div>
+    
+                <!-- Formulário de transação para Deivid -->
+                <button class="show-hide-btn" onclick="toggleForm('transaction-form-henrique')">Adicionar Transação</button>
+    
+                <!-- Form for adding a new transaction for Júnior -->
+                <form id="transaction-form-henrique" action="/transacao" method="post" style="display:none;">
+                    <h2>Adicionar Nova Transação</h2>
+                    <label for="transaction-form-henrique">Descrição:</label>
+                    <input style="width: 180px;" type="text" id="transaction-form-henrique" name="nome_do_item" required>
+    
+                    <label for="tipo">Tipo:</label>
+                    <div class="radio-group">
+                        <input type="radio" id="entrada-joao" name="tipo" value="entrada" required>
+                        <label for="entrada-joao">Entrada</label>
+                        <input type="radio" id="saida-joao" name="tipo" value="saida" required>
+                        <label for="saida-joao">Saída</label>
+                    </div>
+    
+                    <!-- Services radio buttons -->
+                    <label for="servico">Serviço:</label>
+            <div class="radio-group">
+                <input type="radio" id="combo" name="servico" value="combo" required>
+                <label for="sobrancelha">Combo</label>
+
+                <input type="radio" id="sobrancelha" name="servico" value="sobrancelha" required>
+                <label for="sobrancelha">Sobrancelha</label>
+            
+                <input type="radio" id="barba" name="servico" value="barba" required>
+                <label for="barba">Barba</label>
+            
+                <input type="radio" id="corte" name="servico" value="corte" required>
+                <label for="corte">Corte</label>
+            
+                <input type="radio" id="infantil" name="servico" value="infantil" required>
+                <label for="navalhado_infantil">Infantil</label><br><br>
+            
+                <input type="radio" id="tesousa" name="servico" value="tesousa" required>
+                <label for="tesousa">Tesousa</label>
+            
+                <input type="radio" id="hidratacao" name="servico" value="hidratacao" required>
+                <label for="hidratacao">Hidratação</label>
+            
+                <input type="radio" id="produto" name="servico" value="produto" required>
+                <label for="produto">Produto</label>
+
+                <input type="radio" id="selagem" name="servico" value="selagem" required>
+                <label for="selagem">Selagem</label>
+
+                <input type="radio" id="vale" name="servico" value="vale" required>
+                <label for="saida">Vale</label>           
+                </div>
+    
+    
+                    <label for="valor">Valor:</label>
+                    <input style="width: 120px;" type="number" id="valor-joao" name="valor" step="0.01" required>
+    
+                    <label for="forma_pagamento">Forma de Pagamento:</label>
+                    <div class="radio-group">
+                        <input type="radio" id="pix-joao" name="forma_pagamento" value="Pix" required>
+                        <label for="pix-joao">Pix</label>
+                        <input type="radio" id="cartao-joao" name="forma_pagamento" value="Cartao" required>
+                        <label for="cartao-joao">Cartão</label>
+                        <input type="radio" id="dinheiro-joao" name="forma_pagamento" value="Dinheiro" required>
+                        <label for="dinheiro-joao">Dinheiro</label>
+                    </div>
+    
+                    <!-- Selection for barber, already filled in with Júnior -->
+                    <label for="edit-barbeiro_id">Barbeiro:</label>
+                    <select id="edit-barbeiro_id" name="barbeiro_id" required disabled>
+                        <% barbeiros.forEach(barbeiro => { %>
+                            <option value="<%= barbeiro.id %>" <%= barbeiro.id === 3 ? 'selected' : '' %>>
+                                <%= barbeiro.nome %>
+                            </option>
+                        <% }) %>
+                    </select>
+                    <input type="hidden" name="barbeiro_id" value="3">
+                    <button type="submit">Adicionar</button>
+                </form>
+            </div>
         </div>
-
     </div>
     <script>
-        function toggleForm() {
+        function toggleFormOne() {
             const form = document.getElementById('transaction-form');
             form.style.display = form.style.display === 'none' ? 'block' : 'none';
         }
+        function toggleForm(formId) {
+            const form = document.getElementById(formId);
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+        
         /*function formatDateToISO(dateStr) {
             if (!dateStr) {
                 console.error('Data fornecida é inválida:', dateStr);
@@ -623,22 +877,22 @@ barbeiros.forEach(barbeiro => {
             henrique: false
         };
     
-        window.verificarSenha = function(barbeiro) {
+        window.verificarSenha = function(barbeiro, barbeiroId) {
             if (!tabsAbertas[barbeiro]) {
                 const senha = prompt('Digite a senha para acessar os serviços de ' + barbeiro.charAt(0).toUpperCase() + barbeiro.slice(1));
     
                 if (senha === senhas[barbeiro]) {
                     tabsAbertas[barbeiro] = true; // Marca a aba como aberta
-                    mostrarOuEsconderTab(barbeiro);
+                    mostrarOuEsconderTab(barbeiro, barbeiroId);
                 } else {
                     alert('Senha incorreta! Acesso negado.');
                 }
             } else {
-                mostrarOuEsconderTab(barbeiro); // Alterna a visibilidade da aba sem pedir a senha
+                mostrarOuEsconderTab(barbeiro, barbeiroId); // Alterna a visibilidade da aba sem pedir a senha
             }
         };
     
-        function mostrarOuEsconderTab(barbeiro) {
+        function mostrarOuEsconderTab(barbeiro, barbeiroId) {
             // Esconde todas as abas
             for (let key in tabs) {
                 tabs[key].style.display = 'none';
@@ -655,7 +909,7 @@ barbeiros.forEach(barbeiro => {
                 tabsAbertas[barbeiro] = true; // Marca a aba como aberta
             }
         }
-        
+    
         const relatorioJoao = document.getElementById('relatorio-joao');
         const relatorioMarcos = document.getElementById('relatorio-marcos');
         const relatorioHenrique = document.getElementById('relatorio-henrique');
@@ -668,7 +922,7 @@ barbeiros.forEach(barbeiro => {
                     console.log("Resultado", data);                    
                     element.innerHTML = `
                <button onclick="fecharAbas()">Fechar</button>
-                        <p>Total de Serviços: ${data.total_servicos}</p>
+                        <p>Total de transações: ${data.total_servicos}</p>
                         <p>Cortes: ${data.cortes}</p>
                         <p>Barbas: ${data.barbas}</p>
                         <p>Sobrancelha: ${data.sobrancelha}</p>
@@ -676,8 +930,9 @@ barbeiros.forEach(barbeiro => {
                         <p>Selagem: ${data.selagem}</p>
                         <p>Infantil: ${data.infantil}</p>
                         <p>Tesousa: ${data.tesousa}</p>
+                        <p>Tesousa: ${data.combo}</p>
                         <p>Produtos: ${data.produtos}</p>                       
-                        <p>Salário/vale: ${data.saidas}</p>`                        
+                        <p>Vale: ${data.vale}</p>`                        
                     ;
                 });
         }
@@ -689,7 +944,7 @@ barbeiros.forEach(barbeiro => {
                 .then(data => {
                     let rendimentoServicos = parseFloat(data.rendimento_servicos) || 0;
                     let comissaoProdutos = parseFloat(data.comissao_produtos) || 0;
-                    let totalRendimento = parseFloat(data.total_rendimento) || 0;
+                    let totalRendimento = parseFloat(data.saldo) || 0;
         
                     // Limpa o conteúdo anterior
                     element.innerHTML = '';
