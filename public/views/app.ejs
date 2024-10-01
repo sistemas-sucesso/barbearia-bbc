@@ -273,87 +273,87 @@
     <div class="container">
     <div class="container">
         <h1>Sistema de Salão</h1>
-        <button class="show-hide-btn" onclick="toggleFormOne()">Adicionar Transação</button>
-        <form id="transaction-form" action="/transacao" method="post" style="display:none;">
-            <h2>Adicionar Nova Transação</h2>
-            <label for="edit-nome_do_item">Descrição:</label>
-            <input style="width: 180px;" type="text" id="edit-nome_do_item" name="nome_do_item" >     
-            <label for="tipo">Tipo:</label>
-            <div class="radio-group">
-                <input type="radio" id="entrada" name="tipo" value="entrada" required>
-                <label for="entrada">Entrada</label>
-                <input type="radio" id="saida" name="tipo" value="saida" required>
-                <label for="saida">Saída</label>
-            </div>
-       
-            <label for="servico">Serviço:</label>
-            <div class="radio-group">
-                <input type="radio" id="combo" name="servico" value="combo" required>
-                <label for="sobrancelha">Combo</label>
-
-                <input type="radio" id="sobrancelha" name="servico" value="sobrancelha" required>
-                <label for="sobrancelha">Sobrancelha</label>
-            
-                <input type="radio" id="barba" name="servico" value="barba" required>
-                <label for="barba">Barba</label>
-            
-                <input type="radio" id="corte" name="servico" value="corte" required>
-                <label for="corte">Corte</label>
-            
-                <input type="radio" id="infantil" name="servico" value="infantil" required>
-                <label for="navalhado_infantil">Infantil</label><br><br>
-            
-                <input type="radio" id="tesousa" name="servico" value="tesousa" required>
-                <label for="tesousa">Tesousa</label>
-            
-                <input type="radio" id="hidratacao" name="servico" value="hidratacao" required>
-                <label for="hidratacao">Hidratação</label>
-            
-                <input type="radio" id="produto" name="servico" value="produto" required>
-                <label for="produto">Produto</label>
-
-                <input type="radio" id="selagem" name="servico" value="selagem" required>
-                <label for="selagem">Selagem</label>
-
-                <input type="radio" id="saida" name="servico" value="saida" required>
-                <label for="saida">Sal/val/saída</label>  
-
-                <input type="radio" id="vale" name="servico" value="vale" required>
-                <label for="saida">Vale</label>           
-                </div>
-    
-    
         
-            <label for="valor">Valor:</label>
-            <input style="width: 120px;" type="number" id="valor" name="valor" step="0.01" required>      
-            
-        
-            <label for="forma_pagamento">Forma de Pagamento:</label>
-            <div class="radio-group">
-    <input type="radio" id="pix" name="forma_pagamento" value="Pix" required>
-    <label for="pix">Pix</label>
-    <input type="radio" id="cartao" name="forma_pagamento" value="Cartao" required>
-    <label for="cartao">Cartão</label>
-    <input type="radio" id="dinheiro" name="forma_pagamento" value="Dinheiro" required>
-    <label for="dinheiro">Dinheiro</label>
-</div>
-
-        
-            <label for="barbeiro_id">Barbeiro:</label>
-            <div class="radio-group">
-                <% barbeiros.forEach(barbeiro => { %>
-                    <input type="radio" id="barbeiro_<%= barbeiro.id %>" name="barbeiro_id" value="<%= barbeiro.id %>" required>
-                    <label for="barbeiro_<%= barbeiro.id %>"><%= barbeiro.nome %></label>
-                <% }) %>
-
-            </div>        
-            <button type="submit">Adicionar</button>
-        </form>
         <button  onclick="togglePage()">Mostrar/Esconder</button>
         <div id="pag" style="display: none;">  
             
             
-
+            <button class="show-hide-btn" onclick="toggleFormOne()">Adicionar Transação</button>
+            <form id="transaction-form" action="/transacao" method="post" style="display:none;">
+                <h2>Adicionar Nova Transação</h2>
+                <label for="edit-nome_do_item">Descrição:</label>
+                <input style="width: 180px;" type="text" id="edit-nome_do_item" name="nome_do_item" >     
+                <label for="tipo">Tipo:</label>
+                <div class="radio-group">
+                    <input type="radio" id="entrada" name="tipo" value="entrada" required>
+                    <label for="entrada">Entrada</label>
+                    <input type="radio" id="saida" name="tipo" value="saida" required>
+                    <label for="saida">Saída</label>
+                </div>
+           
+                <label for="servico">Serviço:</label>
+                <div class="radio-group">
+                    <input type="radio" id="combo" name="servico" value="combo" required>
+                    <label for="sobrancelha">Combo</label>
+    
+                    <input type="radio" id="sobrancelha" name="servico" value="sobrancelha" required>
+                    <label for="sobrancelha">Sobrancelha</label>
+                
+                    <input type="radio" id="barba" name="servico" value="barba" required>
+                    <label for="barba">Barba</label>
+                
+                    <input type="radio" id="corte" name="servico" value="corte" required>
+                    <label for="corte">Corte</label>
+                
+                    <input type="radio" id="infantil" name="servico" value="infantil" required>
+                    <label for="navalhado_infantil">Infantil</label><br><br>
+                
+                    <input type="radio" id="tesousa" name="servico" value="tesousa" required>
+                    <label for="tesousa">Tesousa</label>
+                
+                    <input type="radio" id="hidratacao" name="servico" value="hidratacao" required>
+                    <label for="hidratacao">Hidratação</label>
+                
+                    <input type="radio" id="produto" name="servico" value="produto" required>
+                    <label for="produto">Produto</label>
+    
+                    <input type="radio" id="selagem" name="servico" value="selagem" required>
+                    <label for="selagem">Selagem</label>
+    
+                    <input type="radio" id="saida" name="servico" value="saida" required>
+                    <label for="saida">Sal/val/saída</label>  
+    
+                    <input type="radio" id="vale" name="servico" value="vale" required>
+                    <label for="saida">Vale</label>           
+                    </div>
+        
+        
+            
+                <label for="valor">Valor:</label>
+                <input style="width: 120px;" type="number" id="valor" name="valor" step="0.01" required>      
+                
+            
+                <label for="forma_pagamento">Forma de Pagamento:</label>
+                <div class="radio-group">
+        <input type="radio" id="pix" name="forma_pagamento" value="Pix" required>
+        <label for="pix">Pix</label>
+        <input type="radio" id="cartao" name="forma_pagamento" value="Cartao" required>
+        <label for="cartao">Cartão</label>
+        <input type="radio" id="dinheiro" name="forma_pagamento" value="Dinheiro" required>
+        <label for="dinheiro">Dinheiro</label>
+    </div>
+    
+            
+                <label for="barbeiro_id">Barbeiro:</label>
+                <div class="radio-group">
+                    <% barbeiros.forEach(barbeiro => { %>
+                        <input type="radio" id="barbeiro_<%= barbeiro.id %>" name="barbeiro_id" value="<%= barbeiro.id %>" required>
+                        <label for="barbeiro_<%= barbeiro.id %>"><%= barbeiro.nome %></label>
+                    <% }) %>
+    
+                </div>        
+                <button type="submit">Adicionar</button>
+            </form>
             
          <button id="toggleTableBtn1">Ver relatório</button>   
          <div class="salao"><a class="meta" href="/relatorio-mensal">Relatórios</a></div>
@@ -957,7 +957,7 @@ barbeiros.forEach(barbeiro => {
                     comissaoProdutosP.textContent = `Comissão em Produtos: R$${comissaoProdutos.toFixed(2)}`;
         
                     const totalRendimentoP = document.createElement('p');
-                    totalRendimentoP.textContent = `Salário: R$${totalRendimento.toFixed(2)}`;
+                    totalRendimentoP.textContent = `Total de Rendimento: R$${totalRendimento.toFixed(2)}`;
         
                     // Adiciona os elementos ao DOM
                     element.appendChild(rendimentoServicosP);
