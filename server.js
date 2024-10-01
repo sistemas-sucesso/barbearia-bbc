@@ -259,23 +259,26 @@ app.get('/relatorio-mensal', (req, res) => {
     `;
 
     const queryServicos = `
-        SELECT 
-            barbeiro_id,
-            COUNT(*) AS total_servicos,
-            SUM(CASE WHEN tipo = 'entrada' AND servico = 'corte' THEN 1 ELSE 0 END) AS cortes,
-            SUM(CASE WHEN tipo = 'entrada' AND servico = 'barba' THEN 1 ELSE 0 END) AS barbas,
-            SUM(CASE WHEN tipo = 'entrada' AND servico = 'sobrancelha' THEN 1 ELSE 0 END) AS sobrancelha,
-            SUM(CASE WHEN tipo = 'entrada' AND servico = 'hidratacao' THEN 1 ELSE 0 END) AS hidratacao,
-            SUM(CASE WHEN tipo = 'entrada' AND servico = 'selagem' THEN 1 ELSE 0 END) AS selagem,
-            SUM(CASE WHEN tipo = 'entrada' AND servico = 'infantil' THEN 1 ELSE 0 END) AS infantil,
-            SUM(CASE WHEN tipo = 'entrada' AND servico = 'tesousa' THEN 1 ELSE 0 END) AS tesousa,
-            SUM(CASE WHEN tipo = 'entrada' AND servico = 'combo' THEN 1 ELSE 0 END) AS combo,
-            SUM(CASE WHEN tipo = 'entrada' AND servico = 'vale' THEN 1 ELSE 0 END) AS vale,
-            SUM(CASE WHEN tipo = 'entrada' AND servico = 'produto' THEN 1 ELSE 0 END) AS produtos,
-            SUM(CASE WHEN tipo = 'saida' THEN valor ELSE 0 END) AS saidas
-        FROM transacao
-        WHERE EXTRACT(MONTH FROM data) = $1 AND EXTRACT(YEAR FROM data) = $2
-        GROUP BY barbeiro_id;
+       SELECT 
+    b.nome AS nome_barbeiro,  -- Pega o nome do barbeiro da tabela barbeiros
+    t.barbeiro_id,
+    COUNT(*) AS total_servicos,
+    SUM(CASE WHEN t.tipo = 'entrada' AND t.servico = 'corte' THEN 1 ELSE 0 END) AS cortes,
+    SUM(CASE WHEN t.tipo = 'entrada' AND t.servico = 'barba' THEN 1 ELSE 0 END) AS barbas,
+    SUM(CASE WHEN t.tipo = 'entrada' AND t.servico = 'sobrancelha' THEN 1 ELSE 0 END) AS sobrancelha,
+    SUM(CASE WHEN t.tipo = 'entrada' AND t.servico = 'hidratacao' THEN 1 ELSE 0 END) AS hidratacao,
+    SUM(CASE WHEN t.tipo = 'entrada' AND t.servico = 'selagem' THEN 1 ELSE 0 END) AS selagem,
+    SUM(CASE WHEN t.tipo = 'entrada' AND t.servico = 'infantil' THEN 1 ELSE 0 END) AS infantil,
+    SUM(CASE WHEN t.tipo = 'entrada' AND t.servico = 'tesousa' THEN 1 ELSE 0 END) AS tesousa,
+    SUM(CASE WHEN t.tipo = 'entrada' AND t.servico = 'combo' THEN 1 ELSE 0 END) AS combo,
+    SUM(CASE WHEN t.tipo = 'saida' AND t.servico = 'vale' THEN 1 ELSE 0 END) AS vale,
+    SUM(CASE WHEN t.tipo = 'entrada' AND t.servico = 'produto' THEN 1 ELSE 0 END) AS produtos,
+    SUM(CASE WHEN t.tipo = 'saida' THEN t.valor ELSE 0 END) AS saidas
+FROM transacao t
+JOIN barbeiros b ON t.barbeiro_id = b.id  -- Realiza o JOIN entre as duas tabelas
+WHERE EXTRACT(MONTH FROM t.data) = $1 
+  AND EXTRACT(YEAR FROM t.data) = $2
+GROUP BY t.barbeiro_id, b.nome;  -- Agrupa pelo barbeiro_id e nome do barbeiro
     `;
 
     Promise.all([
