@@ -274,7 +274,7 @@
     <div class="container">
         <h1>Sistema de Salão</h1>
         
-        <button  onclick="togglePage()">Administrador</button>
+        <button  onclick="togglePage()">Mostrar/Esconder</button>
         <div id="pag" style="display: none;">  
             
             
@@ -354,7 +354,24 @@
                 </div>        
                 <button type="submit">Adicionar</button>
             </form>
+            <button class="show-hide-btn" onclick="toggleFormTwo()">Cadastro de Barbeiros</button>
+              <div id="barbeiro" style="display:none;">          
+            <form id="barbeiroForm" >
+                <label for="nome">Nome do Barbeiro:</label>
+                <input type="text" id="nome" name="nome" required>
+                <button type="submit">Cadastrar Barbeiro</button>
+            </form>
+        
             
+            <ul id="barbeiroList">
+                <% barbeiros.forEach(barbeiro => { %>
+                    <li>
+                        <%= barbeiro.nome %>
+                        <button onclick="deleteBarbeiro(<%= barbeiro.id %>)">Excluir</button>
+                    </li>
+                <% }) %>
+            </ul>
+        </div>
          <button id="toggleTableBtn1">Ver relatório</button>   
          <div class="salao"><a class="meta" href="/relatorio-mensal">Relatórios</a></div>
 
@@ -567,7 +584,7 @@ barbeiros.forEach(barbeiro => {
                 <label for="selagem">Selagem</label>
 
                 <input type="radio" id="vale" name="servico" value="vale" required>
-                <label for="saida">vale</label>           
+                <label for="vale">vale</label>           
                 </div>
     
     
@@ -780,6 +797,14 @@ barbeiros.forEach(barbeiro => {
     <script>
         function toggleFormOne() {
             const form = document.getElementById('transaction-form');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+        function toggleFormTwo() {
+            const form = document.getElementById('barbeiro');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+        function toggleFormThree() {
+            const form = document.getElementById('barbeiroList');
             form.style.display = form.style.display === 'none' ? 'block' : 'none';
         }
         function toggleForm(formId) {
@@ -1057,6 +1082,53 @@ barbeiros.forEach(barbeiro => {
 location.reload();
         });
     }
+    document.getElementById('barbeiroForm').addEventListener('submit', async (event) => {
+        event.preventDefault(); // Previne o comportamento padrão do formulário
+    
+        const nome = document.getElementById('nome').value;
+    
+        try {
+            const response = await fetch('/barbeiros', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ nome }),
+            });
+    
+            const data = await response.json();
+    
+            if (response.ok) {
+                // Adiciona o barbeiro à lista
+                const barbeiroList = document.getElementById('barbeiroList');
+                barbeiroList.innerHTML += `<li>${data.barbeiro.nome} <button onclick="deleteBarbeiro(${data.barbeiro.id})">Excluir</button></li>`;
+                document.getElementById('nome').value = ''; // Limpa o campo
+            } else {
+                alert(data.error);
+            }
+        } catch (error) {
+            console.error('Erro ao cadastrar barbeiro:', error);
+        }
+    });
+    
+    async function deleteBarbeiro(id) {
+        try {
+            const response = await fetch(`/barbeiros/${id}`, {
+                method: 'DELETE',
+            });
+    
+            if (response.ok) {
+                // Remove o barbeiro da lista
+                document.querySelector(`li:has(button[onclick*="${id}"])`).remove();
+            } else {
+                const data = await response.json();
+                alert(data.error);
+            }
+        } catch (error) {
+            console.error('Erro ao excluir barbeiro:', error);
+        }
+    }
+    
     </script>
 </body>
 </html>
