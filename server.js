@@ -129,9 +129,11 @@ app.get('/', async (req, res, next) => {
 app.post('/transacao', async (req, res, next) => {
     try {
         let { tipo, valor, servico, forma_pagamento, barbeiro_id, nome_do_item } = req.body;
-if (servico === 'vale') {
+          console.log("dados", req.body);
+          if (servico === 'vale') {
             tipo = 'saida';
         }
+        console.log("dados depois dA VERIIFCAÇÃO", req.body);
         if (!tipo || !valor || !servico || !forma_pagamento || !barbeiro_id) {
             return res.status(400).json({ error: 'Todos os campos são obrigatórios.' });
         }
@@ -259,7 +261,7 @@ app.get('/relatorio-mensal', (req, res) => {
     `;
 
     const queryServicos = `
-       SELECT 
+        SELECT 
     b.nome AS nome_barbeiro,  -- Pega o nome do barbeiro da tabela barbeiros
     t.barbeiro_id,
     COUNT(*) AS total_servicos,
@@ -279,6 +281,7 @@ JOIN barbeiros b ON t.barbeiro_id = b.id  -- Realiza o JOIN entre as duas tabela
 WHERE EXTRACT(MONTH FROM t.data) = $1 
   AND EXTRACT(YEAR FROM t.data) = $2
 GROUP BY t.barbeiro_id, b.nome;  -- Agrupa pelo barbeiro_id e nome do barbeiro
+
     `;
 
     Promise.all([
@@ -314,6 +317,48 @@ app.post('/delete-transacao', async (req, res, next) => {
         res.redirect('/'); 
     } catch (err) {
         next(err); 
+    }
+});
+app.get('/barbeiros', async (req, res) => {
+    try {
+        const result = await client.query('SELECT * FROM barbeiros ORDER BY nome ASC');
+        const barbeiros = result.rows;
+        res.render('barbeiros', { barbeiros });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Erro ao buscar barbeiros.');
+    }
+});
+app.delete('/barbeiros/:id', async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        const deleteQuery = 'DELETE FROM barbeiros WHERE id = $1 RETURNING *';
+        const result = await client.query(deleteQuery, [id]);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: 'Barbeiro não encontrado.' });
+        }
+
+        return res.status(200).json({ message: 'Barbeiro e suas transações excluídos com sucesso!' });
+    } catch (err) {
+        next(err);
+    }
+});
+app.post('/barbeiros', async (req, res, next) => {
+    try {
+        const { nome } = req.body;
+        
+        if (!nome) {
+            return res.status(400).json({ error: 'O nome do barbeiro é obrigatório.' });
+        }
+
+        const query = 'INSERT INTO barbeiros (nome) VALUES ($1) RETURNING *';
+        const result = await client.query(query, [nome]);
+
+        return res.status(201).json({ message: 'Barbeiro cadastrado com sucesso!', barbeiro: result.rows[0] });
+    } catch (err) {
+        next(err);
     }
 });
 
