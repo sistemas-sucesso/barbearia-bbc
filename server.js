@@ -128,8 +128,10 @@ app.get('/', async (req, res, next) => {
 // Rota para adicionar uma nova transação
 app.post('/transacao', async (req, res, next) => {
     try {
-        const { tipo, valor, servico, forma_pagamento, barbeiro_id, nome_do_item } = req.body;
-
+        let { tipo, valor, servico, forma_pagamento, barbeiro_id, nome_do_item } = req.body;
+if (servico === 'vale') {
+            tipo = 'saida';
+        }
         if (!tipo || !valor || !servico || !forma_pagamento || !barbeiro_id) {
             return res.status(400).json({ error: 'Todos os campos são obrigatórios.' });
         }
