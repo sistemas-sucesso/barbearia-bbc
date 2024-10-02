@@ -204,7 +204,10 @@
         form button:hover {
             background-color: #555;
         }
-        
+        .labes{
+            color: black;
+            font-weight: bold;
+        }
         .radio-group {
             display: flex;
             align-items: center; /* Alinha verticalmente os itens ao centro */
@@ -253,7 +256,7 @@
     border: 1px solid #ccc; /* opcional: adiciona uma borda ao redor da tabela */
     padding: 10px; /* opcional: adiciona espaçamento ao redor da tabela */
 }
-@media (max-width: 70px) {
+@media (max-width: 700px) {
     .radio-group {
         width: 100%; 
         display: flex;
@@ -281,9 +284,9 @@
             <button class="show-hide-btn" onclick="toggleFormOne()">Adicionar Transação</button>
             <form id="transaction-form" action="/transacao" method="post" style="display:none;">
                 <h2>Adicionar Nova Transação</h2>
-                <label for="edit-nome_do_item">Descrição:</label>
+                <label class="labes" for="edit-nome_do_item">Descrição:</label>
                 <input style="width: 180px;" type="text" id="edit-nome_do_item" name="nome_do_item" >     
-                <label for="tipo">Tipo:</label>
+                <label class="labes" for="tipo">Tipo:</label>
                 <div class="radio-group">
                     <input type="radio" id="entrada" name="tipo" value="entrada" required>
                     <label for="entrada">Entrada</label>
@@ -291,7 +294,7 @@
                     <label for="saida">Saída</label>
                 </div>
            
-                <label for="servico">Serviço:</label>
+                <label class="labes" for="servico">Serviço:</label>
                 <div class="radio-group">
                     <input type="radio" id="combo" name="servico" value="combo" required>
                     <label for="sobrancelha">Combo</label>
@@ -329,11 +332,11 @@
         
         
             
-                <label for="valor">Valor:</label>
+                <label class="labes" for="valor">Valor:</label>
                 <input style="width: 120px;" type="number" id="valor" name="valor" step="0.01" required>      
                 
             
-                <label for="forma_pagamento">Forma de Pagamento:</label>
+                <label class="labes" for="forma_pagamento">Forma de Pagamento:</label>
                 <div class="radio-group">
         <input type="radio" id="pix" name="forma_pagamento" value="Pix" required>
         <label for="pix">Pix</label>
@@ -344,7 +347,7 @@
     </div>
     
             
-                <label for="barbeiro_id">Barbeiro:</label>
+                <label class="labes" for="barbeiro_id">Barbeiro:</label>
                 <div class="radio-group">
                     <% barbeiros.forEach(barbeiro => { %>
                         <input type="radio" id="barbeiro_<%= barbeiro.id %>" name="barbeiro_id" value="<%= barbeiro.id %>" required>
@@ -542,10 +545,10 @@ barbeiros.forEach(barbeiro => {
                 <!-- Form for adding a new transaction for Júnior -->
                 <form id="transaction-form-joao" action="/transacao" method="post" style="display:none;">
                     <h2>Adicionar Nova Transação</h2>
-                    <label for="edit-nome_do_item">Descrição:</label>
+                    <label class="labes" for="edit-nome_do_item">Descrição:</label>
                     <input style="width: 180px;" type="text" id="edit-nome_do_item" name="nome_do_item" required>
     
-                    <label for="tipo">Tipo:</label>
+                    <label class="labes" for="tipo">Tipo:</label>
                     <div class="radio-group">
                         <input type="radio" id="entrada-joao" name="tipo" value="entrada" required>
                         <label for="entrada-joao">Entrada</label>
@@ -554,7 +557,7 @@ barbeiros.forEach(barbeiro => {
                     </div>
     
                     <!-- Services radio buttons -->
-                    <label for="servico">Serviço:</label>
+                    <label class="labes" for="servico">Serviço:</label>
             <div class="radio-group">
                 <input type="radio" id="combo" name="servico" value="combo" required>
                 <label for="sobrancelha">Combo</label>
@@ -588,10 +591,10 @@ barbeiros.forEach(barbeiro => {
                 </div>
     
     
-                    <label for="valor">Valor:</label>
+                    <label class="labes" for="valor">Valor:</label>
                     <input style="width: 120px;" type="number" id="valor-joao" name="valor" step="0.01" required>
     
-                    <label for="forma_pagamento">Forma de Pagamento:</label>
+                    <label class="labes" for="forma_pagamento">Forma de Pagamento:</label>
                     <div class="radio-group">
                         <input type="radio" id="pix-joao" name="forma_pagamento" value="Pix" required>
                         <label for="pix-joao">Pix</label>
@@ -602,7 +605,7 @@ barbeiros.forEach(barbeiro => {
                     </div>
     
                     <!-- Selection for barber, already filled in with Júnior -->
-                    <label for="edit-barbeiro_id">Barbeiro:</label>
+                    <label class="labes" for="edit-barbeiro_id">Barbeiro:</label>
                     <select id="edit-barbeiro_id" name="barbeiro_id" required disabled>
                         <% barbeiros.forEach(barbeiro => { %>
                             <option value="<%= barbeiro.id %>" <%= barbeiro.id === 1 ? 'selected' : '' %>>
@@ -633,10 +636,10 @@ barbeiros.forEach(barbeiro => {
                 <!-- Form for adding a new transaction for Júnior -->
                 <form id="transaction-form-marcos" action="/transacao" method="post" style="display:none;">
                     <h2>Adicionar Nova Transação</h2>
-                    <label for="edit-nome_do_item-marcos">Descrição:</label>
+                    <label class="labes" for="edit-nome_do_item-marcos">Descrição:</label>
                     <input style="width: 180px;" type="text" id="edit-nome_do_item-marcos" name="nome_do_item" required>
     
-                    <label for="tipo">Tipo:</label>
+                    <label class="labes" for="tipo">Tipo:</label>
                     <div class="radio-group">
                         <input type="radio" id="entrada-joao" name="tipo" value="entrada" required>
                         <label for="entrada-joao">Entrada</label>
@@ -645,7 +648,7 @@ barbeiros.forEach(barbeiro => {
                     </div>
     
                     <!-- Services radio buttons -->
-                    <label for="servico">Serviço:</label>
+                    <label class="labes" for="servico">Serviço:</label>
             <div class="radio-group">
                 <input type="radio" id="combo" name="servico" value="combo" required>
                 <label for="sobrancelha">Combo</label>
@@ -679,10 +682,10 @@ barbeiros.forEach(barbeiro => {
                 </div>
     
     
-                    <label for="valor">Valor:</label>
+                    <label class="labes" for="valor">Valor:</label>
                     <input style="width: 120px;" type="number" id="valor-joao" name="valor" step="0.01" required>
     
-                    <label for="forma_pagamento">Forma de Pagamento:</label>
+                    <label class="labes" for="forma_pagamento">Forma de Pagamento:</label>
                     <div class="radio-group">
                         <input type="radio" id="pix-joao" name="forma_pagamento" value="Pix" required>
                         <label for="pix-joao">Pix</label>
@@ -693,7 +696,7 @@ barbeiros.forEach(barbeiro => {
                     </div>
     
                     <!-- Selection for barber, already filled in with Júnior -->
-                    <label for="edit-barbeiro_id">Barbeiro:</label>
+                    <label class="labes" for="edit-barbeiro_id">Barbeiro:</label>
                     <select id="edit-barbeiro_id" name="barbeiro_id" required disabled>
                         <% barbeiros.forEach(barbeiro => { %>
                             <option value="<%= barbeiro.id %>" <%= barbeiro.id === 2 ? 'selected' : '' %>>
@@ -720,10 +723,10 @@ barbeiros.forEach(barbeiro => {
                 <!-- Form for adding a new transaction for Júnior -->
                 <form id="transaction-form-henrique" action="/transacao" method="post" style="display:none;">
                     <h2>Adicionar Nova Transação</h2>
-                    <label for="transaction-form-henrique">Descrição:</label>
+                    <label class="labes" for="transaction-form-henrique">Descrição:</label>
                     <input style="width: 180px;" type="text" id="transaction-form-henrique" name="nome_do_item" required>
     
-                    <label for="tipo">Tipo:</label>
+                    <label class="labes" for="tipo">Tipo:</label>
                     <div class="radio-group">
                         <input type="radio" id="entrada-joao" name="tipo" value="entrada" required>
                         <label for="entrada-joao">Entrada</label>
@@ -732,7 +735,7 @@ barbeiros.forEach(barbeiro => {
                     </div>
     
                     <!-- Services radio buttons -->
-                    <label for="servico">Serviço:</label>
+                    <label class="labes" for="servico">Serviço:</label>
             <div class="radio-group">
                 <input type="radio" id="combo" name="servico" value="combo" required>
                 <label for="sobrancelha">Combo</label>
@@ -766,10 +769,10 @@ barbeiros.forEach(barbeiro => {
                 </div>
     
     
-                    <label for="valor">Valor:</label>
+                    <label class="labes" for="valor">Valor:</label>
                     <input style="width: 120px;" type="number" id="valor-joao" name="valor" step="0.01" required>
     
-                    <label for="forma_pagamento">Forma de Pagamento:</label>
+                    <label class="labes" for="forma_pagamento">Forma de Pagamento:</label>
                     <div class="radio-group">
                         <input type="radio" id="pix-joao" name="forma_pagamento" value="Pix" required>
                         <label for="pix-joao">Pix</label>
@@ -780,7 +783,7 @@ barbeiros.forEach(barbeiro => {
                     </div>
     
                     <!-- Selection for barber, already filled in with Júnior -->
-                    <label for="edit-barbeiro_id">Barbeiro:</label>
+                    <label class="labes" for="edit-barbeiro_id">Barbeiro:</label>
                     <select id="edit-barbeiro_id" name="barbeiro_id" required disabled>
                         <% barbeiros.forEach(barbeiro => { %>
                             <option value="<%= barbeiro.id %>" <%= barbeiro.id === 3 ? 'selected' : '' %>>
