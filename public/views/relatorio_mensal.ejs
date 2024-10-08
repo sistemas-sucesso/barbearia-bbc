@@ -74,20 +74,6 @@
     <div><p>Total de Entradas: R$ <%= total_entrada_mes.toFixed(2) %></p></div>
     <div> <p>Total de Saídas: R$ <%= total_saida_mes.toFixed(2) %></p></div>
     <div> <p>Saldo: R$ <%= saldo_mes.toFixed(2) %></p></div><br><br>
-<h2>Total de Serviços</h2>
-<div>
-    <p>Total de Serviços: <%= totalServicos.total_servicos %></p>
-    <p>Cortes: <%= totalServicos.cortes %></p>
-    <p>Barbas: <%= totalServicos.barbas %></p>
-    <p>Sobrancelha: <%= totalServicos.sobrancelha %></p>
-    <p>Hidratação: <%= totalServicos.hidratacao %></p>
-    <p>Selagem: <%= totalServicos.selagem %></p>
-    <p>Infantil: <%= totalServicos.infantil %></p>
-    <p>Tesousa: <%= totalServicos.tesousa %></p>
-    <p>Produtos: <%= totalServicos.produtos %></p>
-    <p>Saídas: R$ <%= totalServicos.saidas %></p>
-</div>
-<hr><br>
 
     <h2>Serviços por Barbeiro</h2>
 <% servicosPorBarbeiro.forEach(barbeiro => { %>
@@ -103,6 +89,8 @@
         <p>Tesousa: <%= barbeiro.tesousa %></p>
         <p>Produtos: <%= barbeiro.produtos %></p>
         <p>Saídas: R$ <%= barbeiro.saidas %></p>
+        <p>Saídas: R$ <%= barbeiro.combo %></p>
+        <p>Saídas: R$ <%= barbeiro.vale %></p>
     </div>
 <% }); %>
 <hr><br><br>
